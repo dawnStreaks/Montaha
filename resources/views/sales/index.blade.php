@@ -146,15 +146,37 @@
         $(document).on("change","#product_id",function(){
             checkAvailable(this.value);
         });
+        // $(document).on("change","#barcode_name",function(){
+        //     $('#form-item1').submit();
+        // });
+
+        $(document).on("click","#order_completed",function(){
+            $('#barcode_name').val("");
+
+            $.ajax({
+                url: "{{ url('order_complete') }}" ,
+                type: "GET",
+                dataType: "JSON",
+                success: function(data) {
+                    // alert("Success");
+                    $('#products-out-table').DataTable().ajax.reload();
+
+
+                },
+                error : function() {
+                    alert("Nothing Data");
+                }
+            });
+        });
 
         function editForm(id) {
             save_method = 'edit';
+            alert(id);
             $('input[name=_method]').val('PATCH');
              $('#modal-form').modal('show');
-            $('#modal-form form')[0].reset();
 
             $.ajax({
-                url: "{{ url('productsOut') }}" + '/' + id + "/edit",
+                url: "{{ url('sales') }}" + '/' + id + "/edit",
                 type: "GET",
                 dataType: "JSON",
                 success: function(data) {
@@ -165,6 +187,7 @@
                     $('#product_id').val(data.product_id).trigger('change');
                     $('#customer_id').val(data.customer_id).trigger('change');
                     $('#qty').val(data.qty);
+                    $('#price').val(data.price);
                     $('#date').val(data.date);
                 },
                 error : function() {
@@ -198,7 +221,7 @@
                 confirmButtonText: 'Yes, delete it!'
             }).then(function () {
                 $.ajax({
-                    url : "{{ url('productsOut') }}" + '/' + id,
+                    url : "{{ url('sales') }}" + '/' + id,
                     type : "POST",
                     data : {'_method' : 'DELETE', '_token' : csrf_token},
                     success : function(data) {

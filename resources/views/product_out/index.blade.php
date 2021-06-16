@@ -47,7 +47,7 @@
                     <th>Multiple Export Invoice</th>
                     <th>ID</th>
                     <th>Products</th>
-                    <th>Customer</th>
+                    <th>Price</th>
                     <th>QTY</th>
                     <th>Date</th>
                     <th></th>
@@ -115,7 +115,7 @@
                 {data: 'multiple_export', name: 'multiple_export'},
                 {data: 'id', name: 'id'},
                 {data: 'products_name', name: 'products_name'},
-                {data: 'customer_name', name: 'customer_name'},
+                {data: 'price', name: 'price'},
                 {data: 'qty', name: 'qty'},
                 {data: 'date', name: 'date'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}

@@ -8,7 +8,7 @@ class Product_Out extends Model
 {
     protected $table = 'product_out';
 
-    protected $fillable = ['product_id','customer_id','qty','date'];
+    protected $fillable = ['product_id','po_no','price','customer_id','qty','date'];
 
 
     protected $hidden = ['created_at','updated_at'];

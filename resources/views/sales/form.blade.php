@@ -46,6 +46,11 @@
                             <span class="text-danger"><span id="productName"></span> currently number <span id="available">0</span>.</span>
                             <span class="help-block with-errors"></span>
                         </div>
+                        <div class="form-group">
+                            <label>Price</label>
+                            <input type="text" class="form-control" id="price" name="price"  required>
+                        </div>
+
 
                         
                     </div>

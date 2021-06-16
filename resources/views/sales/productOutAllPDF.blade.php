@@ -44,7 +44,7 @@
     <tr>
         <td>ID</td>
         <td>Product</td>
-        <td>Customer</td>
+        <td>Price</td>
         <td>Quantity</td>
         <td>Date</td>
     </tr>
@@ -54,7 +54,7 @@
         <tr>
             <td>{{ $p->id }}</td>
             <td>{{ $p->product->name }}</td>
-            <td>{{ $p->customer->name }}</td>
+            <td>{{ $p->price }}</td>
             <td>{{ $p->qty }}</td>
             <td>{{ $p->date }}</td>
         </tr>

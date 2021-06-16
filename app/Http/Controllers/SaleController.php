@@ -9,6 +9,8 @@ use App\Product;
 use App\Product_Out;
 use App\Temp_Sale;
 use App\Company;
+use App\Sale_New;
+
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use PDF;
@@ -56,7 +58,10 @@ class SaleController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     * 
+     * 
      */
+    //code to scan barcode is written here
     public function store(Request $request)
     {
          $i = 1;
@@ -137,7 +142,7 @@ class SaleController extends Controller
      */
     public function edit($id)
     {
-        $Product_Out = Product_Out::find($id);
+        $Product_Out = Temp_Sale::find($id);
         return $Product_Out;
     }
 
@@ -152,13 +157,13 @@ class SaleController extends Controller
     {
         $this->validate($request, [
             'product_id'     => 'required',
-            'customer_id'    => 'required',
+            'price'          => 'required',
             'qty'            => 'required',
             'date'           => 'required'
         ]);
 
-        $Product_Out = Product_Out::findOrFail($id);
-        $Product_Out->update($request->all());
+        $Temp_Sale = Temp_Sale::findOrFail($id);
+        $Temp_Sale->update($request->all());
 
         $product = Product::findOrFail($request->product_id);
         $product->qty -= $request->qty;
@@ -210,7 +215,7 @@ class SaleController extends Controller
      */
     public function destroy($id)
     {
-        Product_Out::destroy($id);
+        Temp_Sale::destroy($id);
 
         return response()->json([
             'success'    => true,
@@ -243,7 +248,7 @@ class SaleController extends Controller
 
     public function exportProductOutAll()
     {
-        $Product_Out = Product_Out::all();
+        $Product_Out = Temp_Sale::all();
         $pdf = PDF::loadView('sales.productOutAllPDF',compact('Product_Out'));
         return $pdf->download('sales.pdf');
     }
@@ -271,5 +276,54 @@ class SaleController extends Controller
     {
         $Product = Product::findOrFail($id);
         return $Product;
+    }
+
+    public function order_complete()
+    {
+        $i = 0;
+        $temp_sales = Temp_Sale::all();
+        $total_amount = \DB::select(\DB::raw("select SUM(price) as sum from temp_sales "));
+        // dd();// foreach($temp_sales as $object));
+        
+// Dump array with object-arrays
+// dd($arrays[1]['price']);
+        //  Sale_New::insert($temp_sales->toArray());
+        // $sales_new = \DB::table("sales_new")->insertGetId([
+            $input['po_no'] = rand();
+            $input['total_amount'] = $total_amount[0]->sum;
+            $input['date'] = date("Y/m/d");
+        // 'invoice_link' => "/sales"
+    // ]);
+        Sale_New::create($input);
+        // $this->exportProductOutAll();
+        foreach($temp_sales as $object)
+        {
+            $arrays[] = $object->toArray();
+            foreach($arrays as $item)
+            {
+                // dd($item);
+              
+                $test['po_no'] = $input['po_no'];
+                $test['product_id'] = $item['product_id'];
+                $test['price'] = $item['price'];
+                $test['qty'] = $item['qty'];
+                $test['date'] = $item['date'];
+               
+               Product_Out::insert($test);
+
+            }
+
+
+           }
+
+
+        $delete_temp_sales = \DB::select(\DB::raw("truncate table temp_sales"));
+        return response()->json([
+            'success'    => true,
+            'message'    => 'Products invoiced',
+            // 'data' => $input
+        ]);
+    
+
     }
 }

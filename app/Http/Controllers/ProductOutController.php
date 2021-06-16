@@ -153,8 +153,8 @@ class ProductOutController extends Controller
             ->addColumn('products_name', function ($product){
                 return $product->product->name;
             })
-            ->addColumn('customer_name', function ($product){
-                return $product->customer->name;
+            ->addColumn('price', function ($product){
+                return $product->price;
             })
             ->addColumn('multiple_export', function ($product){
                 return '<input type="checkbox" name="exportpdf[]" class="checkbox" value="'. $product->id .'">';
@@ -163,7 +163,7 @@ class ProductOutController extends Controller
                 return '<a onclick="editForm('. $product->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a> ' .
                     '<a onclick="deleteData('. $product->id .')" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-trash"></i> Delete</a>';
             })
-            ->rawColumns(['multiple_export','products_name','customer_name','action'])->make(true);
+            ->rawColumns(['multiple_export','products_name','price','action'])->make(true);
 
     }
 

@@ -47,9 +47,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/apiSales','SaleController@apiProductsOut')->name('api.productsOut1');
      Route::get('/exportSalesAll','SaleController@exportProductOutAll')->name('exportPDF.productOutAll1');
     Route::get('/exportSalesAllExcel','SaleController@exportExcel')->name('exportExcel.productOutAll1');
-    Route::get('/exportSales/','SaleController@exportProductOut')->name('exportPDF.productOut1');
+    Route::get('/exportSales','SaleController@exportProductOut')->name('exportPDF.productOut1');
     Route::get('/checkSalesAvailable/{id}','SaleController@checkAvailable')->name('checkSalesAvailable1');
-    Route::post('/barcodescan/{barcode_name}','SaleController@barcodescan')->name('barcode.scan');
+    // Route::post('/barcodescan/{barcode_name}','SaleController@barcodescan')->name('barcode.scan');
+    Route::get('/order_complete','SaleController@order_complete')->name('order_complete');
+
 
 
     Route::resource('suppliers','SupplierController');
@@ -65,7 +67,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/apiProductsOut','ProductOutController@apiProductsOut')->name('api.productsOut');
     Route::get('/exportProductOutAll','ProductOutController@exportProductOutAll')->name('exportPDF.productOutAll');
     Route::get('/exportProductOutAllExcel','ProductOutController@exportExcel')->name('exportExcel.productOutAll');
-    Route::get('/exportProductOut/','ProductOutController@exportProductOut')->name('exportPDF.productOut');
+    Route::get('/exportProductOut','ProductOutController@exportProductOut')->name('exportPDF.productOut');
     Route::get('/checkAvailable/{id}','ProductOutController@checkAvailable')->name('checkAvailable');
 
     Route::resource('productsIn','ProductInController');
