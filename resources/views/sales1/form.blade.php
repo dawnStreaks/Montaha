@@ -17,29 +17,22 @@
 
                     <div class="box-body">
                         <div class="form-group">
-                            <label>Name</label>
-                            <input type="text" class="form-control" id="name" name="name"  autofocus required>
+                            <label>PO No</label>
+                            <input type="text" class="form-control" id="po_no" name="po_no"  autofocus required>
                             <span class="help-block with-errors"></span>
                         </div>
 
                         <div class="form-group">
-                            <label>Address</label>
-                            <input type="text" class="form-control" id="address" name="address"   required>
+                            <label>Total Amount</label>
+                            <input type="text" class="form-control" id="total_amount" name="total_amount"   required>
                             <span class="help-block with-errors"></span>
                         </div>
 
                         <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" class="form-control" id="email" name="email"   required>
+                            <label>Date</label>
+                            <input type="date" class="form-control" id="date" name="date"   required>
                             <span class="help-block with-errors"></span>
                         </div>
-
-                        <div class="form-group">
-                            <label>Phone</label>
-                            <input type="text" class="form-control" id="phone" name="phone"   required>
-                            <span class="help-block with-errors"></span>
-                        </div>
-
 
                     </div>
                     <!-- /.box-body -->

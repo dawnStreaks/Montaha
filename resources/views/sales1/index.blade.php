@@ -40,11 +40,11 @@
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Name</th>
-                    <th>Address</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th></th>
+                    <th>PO_NO</th>
+                    <th>Total Amount</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                    
                 </tr>
                 </thead>
                 <tbody></tbody>
@@ -53,9 +53,9 @@
         <!-- /.box-body -->
     </div>
 
-    @include('sales.form_import')
+    {{-- @include('sales1.form_import') --}}
 
-    @include('sales.form')
+    @include('sales1.form')
 
 @endsection
 
@@ -72,13 +72,12 @@
         var table = $('#sales-table').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('api.sales') }}",
+            ajax: "{{ route('api.sales1') }}",
             columns: [
                 {data: 'id', name: 'id'},
-                {data: 'name', name: 'name'},
-                {data: 'address', name: 'address'},
-                {data: 'email', name: 'email'},
-                {data: 'phone', name: 'phone'},
+                {data: 'po_no', name: 'po_no'},
+                {data: 'total_amount', name: 'total_amount'},
+                {data: 'date', name: 'date'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ]
         });
@@ -91,12 +90,30 @@
             $('.modal-title').text('Add Sales');
         }
 
+        function generateInvoice(id) {
+
+            $.ajax({
+                url: "{{ url('generateInvoice') }}" + '/' + id ,
+                type: "GET",
+                dataType: "JSON",
+                success: function(data) {
+                    // alert("Success");
+                    // $('#products-out-table').DataTable().ajax.reload();
+                    alert("success");
+                },
+                error : function() {
+                    alert("Nothing Data");
+                }
+            });
+        }
+
+
         function editForm(id) {
             save_method = 'edit';
             $('input[name=_method]').val('PATCH');
             $('#modal-form form')[0].reset();
             $.ajax({
-                url: "{{ url('sales') }}" + '/' + id + "/edit",
+                url: "{{ url('sales1') }}" + '/' + id + "/edit",
                 type: "GET",
                 dataType: "JSON",
                 success: function(data) {
@@ -104,10 +121,9 @@
                     $('.modal-title').text('Edit Sales');
 
                     $('#id').val(data.id);
-                    $('#name').val(data.name);
-                    $('#address').val(data.address);
-                    $('#email').val(data.email);
-                    $('#phone').val(data.phone);
+                    $('#po_no').val(data.po_no);
+                    $('#total_amount').val(data.total_amount);
+                    $('#date').val(data.date);
                 },
                 error : function() {
                     alert("Nothing Data");
@@ -127,7 +143,7 @@
                 confirmButtonText: 'Yes, delete it!'
             }).then(function () {
                 $.ajax({
-                    url : "{{ url('sales') }}" + '/' + id,
+                    url : "{{ url('sales1') }}" + '/' + id,
                     type : "POST",
                     data : {'_method' : 'DELETE', '_token' : csrf_token},
                     success : function(data) {
@@ -155,8 +171,8 @@
             $('#modal-form form').validator().on('submit', function (e) {
                 if (!e.isDefaultPrevented()){
                     var id = $('#id').val();
-                    if (save_method == 'add') url = "{{ url('sales') }}";
-                    else url = "{{ url('sales') . '/' }}" + id;
+                    if (save_method == 'add') url = "{{ url('sales1') }}";
+                    else url = "{{ url('sales1') . '/' }}" + id;
 
                     $.ajax({
                         url : url,

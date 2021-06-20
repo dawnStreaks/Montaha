@@ -100,7 +100,7 @@
 <body>
 <div class="invoice-box">
     <table cellpadding="0" cellspacing="0">
-            <tr class="top">
+            {{-- <tr class="top">
                 <td colspan="5">
                     <table>
                         <tr>
@@ -139,12 +139,12 @@
                             <td>
                                 {{-- {{$Product_Out[0]->customer->name}}<br>
                                 {{$Product_Out[0]->customer->address}}<br>
-                                {{$Product_Out[0]->customer->email}} --}}
+                                {{$Product_Out[0]->customer->email}} 
                             </td>
                         </tr>
                     </table>
                 </td>
-            </tr>
+            </tr> --}}
 
        
             <tr class="heading">
@@ -162,27 +162,26 @@
             @endphp
 
             @foreach($Product_Out as $productData)
+            
+
             @php 
             $i++;
-            
+            // dd($productData);
             if($i == $total){
                 $tr = '';
             }else{
                 $tr = 'last';
             }
             @endphp
-
-            <tr>
-                {{-- <td>{{ $productData->product->name }}</td> --}}
-                {{-- <td>{{ $productData->product->barcode->name }}</td> --}}
+            <tr class="item {{$tr}}">
+                {{-- <td>{{ $productData->product->name }}</td>
+                <td>{{ $productData->product->barcode->name }}</td> --}}
                 <td>{{ $productData->price }}</td>
                 <td>{{ $productData->qty }}</td>
-
                 <td>{{ $productData->price }}</td>
                 <td>{{ $productData->qty }}</td>
                 <td>{{ number_format($productData->price * $productData->qty) }}</td>
             </tr>
-
             @php 
             $allTotal += $productData->price * $productData->qty; 
             @endphp

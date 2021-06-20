@@ -41,6 +41,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/importSales1','SaleController1@ImportExcel')->name('import.sales1');
      Route::get('/exportSalesAll1','SaleController1@exportSalesAll')->name('exportPDF.salesAll1');
     Route::get('/exportSalesAllExcel1','SaleController1@exportExcel')->name('exportExcel.salesAll1');
+    Route::get('/generateInvoice/{id}','SaleController1@generateInvoice')->name('generateInvoice');
+
 
 
     Route::resource('sales','SaleController');

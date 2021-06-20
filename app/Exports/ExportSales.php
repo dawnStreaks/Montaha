@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Sale;
+use App\Sale_New;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromView;
@@ -17,8 +17,8 @@ class ExportSales implements FromView
     public function view(): View
     {
         // TODO: Implement view() method.
-        return view('sales.SalesAllExcel',[
-            'sales' => Sale::all()
+        return view('sales1.SalesAllExcel',[
+            'sales' => Sale_New::all()
         ]);
     }
 }

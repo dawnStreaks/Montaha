@@ -43,18 +43,18 @@
     <thead>
     <tr>
         <td>ID</td>
-        <td>Name</td>
-        <td>Address</td>
-        <td>Email</td>
+        <td>PO No</td>
+        <td>Total Amount<td>
+        <td>Date</td>
     </tr>
     </thead>
     @foreach($sales as $s)
         <tbody>
         <tr>
             <td>{{ $s->id }}</td>
-            <td>{{ $s->name }}</td>
-            <td>{{ $s->address }}</td>
-            <td>{{ $s->email }}</td>
+            <td>{{ $s->po_no }}</td>
+            <td>{{ $s->total_amount }}</td>
+            <td>{{ $s->date }}</td>
         </tr>
         </tbody>
     @endforeach

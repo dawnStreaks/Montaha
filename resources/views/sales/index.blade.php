@@ -34,10 +34,11 @@
                 <form  id="form-item1" method="post" class="form-horizontal" data-toggle="validator" enctype="multipart/form-data" >
                     {{ csrf_field() }} {{ method_field('POST') }}
     
-            <div class="form-group">
-                <input id="barcode_name" name="barcode_name" onmouseover="this.focus();" type="text">
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                  <div class="form-group">
+                    <input id="barcode_name" name="barcode_name" onmouseover="this.focus();" type="text">
+                  </div>
+                {{-- <button type="submit" class="btn btn-primary">Submit</button> --}}
+                </form>
 
             </div>
         </div>
@@ -171,7 +172,7 @@
 
         function editForm(id) {
             save_method = 'edit';
-            alert(id);
+            // alert(id);
             $('input[name=_method]').val('PATCH');
              $('#modal-form').modal('show');
 
@@ -185,7 +186,7 @@
 
                     $('#id').val(data.id);
                     $('#product_id').val(data.product_id).trigger('change');
-                    $('#customer_id').val(data.customer_id).trigger('change');
+                    // $('#customer_id').val(data.customer_id).trigger('change');
                     $('#qty').val(data.qty);
                     $('#price').val(data.price);
                     $('#date').val(data.date);

@@ -50,7 +50,9 @@
                     <th>Price</th>
                     <th>QTY</th>
                     <th>Date</th>
+                    <th>PO_No</th>
                     <th></th>
+
                 </tr>
                 </thead>
                 <tbody></tbody>
@@ -118,6 +120,7 @@
                 {data: 'price', name: 'price'},
                 {data: 'qty', name: 'qty'},
                 {data: 'date', name: 'date'},
+                {data: 'po_no', name: 'po_no'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ]
         });

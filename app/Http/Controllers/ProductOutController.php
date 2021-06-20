@@ -11,7 +11,7 @@ use App\Company;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use PDF;
-
+use Illuminate\Support\Facades\Response as FacadeResponse;
 
 class ProductOutController extends Controller
 {
@@ -156,6 +156,9 @@ class ProductOutController extends Controller
             ->addColumn('price', function ($product){
                 return $product->price;
             })
+            ->addColumn('po_no', function ($product){
+                return $product->po_no;
+            })
             ->addColumn('multiple_export', function ($product){
                 return '<input type="checkbox" name="exportpdf[]" class="checkbox" value="'. $product->id .'">';
             })
@@ -163,7 +166,7 @@ class ProductOutController extends Controller
                 return '<a onclick="editForm('. $product->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a> ' .
                     '<a onclick="deleteData('. $product->id .')" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-trash"></i> Delete</a>';
             })
-            ->rawColumns(['multiple_export','products_name','price','action'])->make(true);
+            ->rawColumns(['multiple_export','products_name','price','action','po_no'])->make(true);
 
     }
 
@@ -179,13 +182,15 @@ class ProductOutController extends Controller
         $idst = explode(",",$request->exportpdf);
         $Product_Out = Product_Out::find($idst);
         $companyInfo = Company::find(1);
-
+//  dd($Product_Out);
         $pdf = PDF::setOptions([
             'images' => true,
             'isHtml5ParserEnabled' => true, 
             'isRemoteEnabled' => true
-        ])->loadView('product_out.productOutPDF', compact('Product_Out', 'companyInfo'))->setPaper('a4', 'portrait')->stream();
+        ])->loadView('product_out.productOutPDF', compact('Product_Out', 'companyInfo'));//->setPaper('a4', 'portrait')->stream();
+        // return $pdf->download('Product_Out.pdf');
         return $pdf->download(date("Y-m-d H:i:s",time()).'_Product_Out.pdf');
+
     }
 
     public function exportExcel()

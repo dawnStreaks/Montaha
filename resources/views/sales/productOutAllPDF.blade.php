@@ -39,6 +39,56 @@
     }
 </style>
 
+
+<div class="invoice-box">
+    <table cellpadding="0" cellspacing="0">
+            <tr class="top">
+                <td colspan="5">
+                    <table>
+                        <tr>
+                            <td class="title">
+                                <img src="{{ asset('upload/logo/'.$companyInfo->logo) }}" style="width:100%; width:200px;">
+                            </td>
+
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            
+                            <td>
+                                Purchase Order #: {{rand(1000,10000)}}<br>
+                                Created: {{date("Y-m-d",time())}}<br>
+                                Due: February 1, 2021
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            
+            <tr class="information">
+                <td colspan="5">
+                    <table>
+                        <tr>
+                            <td>
+                                {{ $companyInfo->name }}<br>
+                                {{ $companyInfo->address }}<br>
+                                {{ $companyInfo->email }}
+                            </td>
+
+                            <td></td>
+                            <td></td>
+                            <td></td>
+{{--                             
+                            <td>
+                                {{$Product_Out[0]->customer->name}}<br>
+                                {{$Product_Out[0]->customer->address}}<br>
+                                {{$Product_Out[0]->customer->email}}
+                            </td> --}}
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+    </table>
+</div>
 <table id="product-masuk" width="100%">
     <thead>
     <tr>
@@ -46,6 +96,7 @@
         <td>Product</td>
         <td>Price</td>
         <td>Quantity</td>
+        <td>Subtotal</td>
         <td>Date</td>
     </tr>
     </thead>
@@ -56,6 +107,7 @@
             <td>{{ $p->product->name }}</td>
             <td>{{ $p->price }}</td>
             <td>{{ $p->qty }}</td>
+            <td>{{ number_format($p->price * $p->qty) }}</td>
             <td>{{ $p->date }}</td>
         </tr>
         </tbody>

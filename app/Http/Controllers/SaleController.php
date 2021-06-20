@@ -10,11 +10,12 @@ use App\Product_Out;
 use App\Temp_Sale;
 use App\Company;
 use App\Sale_New;
-
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use PDF;
+// use Barryvdh\DomPDF\Facade as PDF;
 use App\Barcode;
+use Illuminate\Support\Facades\Response;
 
 
 
@@ -106,7 +107,7 @@ class SaleController extends Controller
         $input['qty'] = 1;
         $input['date'] = date("Y/m/d");
        
-        Product_Out::create($input);
+        // Product_Out::create($input);
         Temp_Sale::create($input);
 
 
@@ -195,7 +196,7 @@ class SaleController extends Controller
 
 
 
-        Product_Out::create($request->all());
+        // Product_Out::create($request->all());
 
         $product = Product::findOrFail($request->product_id);
         $product->qty -= $request->qty;
@@ -233,7 +234,7 @@ class SaleController extends Controller
                 return $product->product->name;
             })
             ->addColumn('price', function ($product){
-                return $product->product->price;
+                return $product->price;
             })
             // ->addColumn('multiple_export', function ($product){
             //     return '<input type="checkbox" name="exportpdf[]" class="checkbox" value="'. $product->id .'">';
@@ -249,7 +250,8 @@ class SaleController extends Controller
     public function exportProductOutAll()
     {
         $Product_Out = Temp_Sale::all();
-        $pdf = PDF::loadView('sales.productOutAllPDF',compact('Product_Out'));
+        $companyInfo = Company::find(1);
+        $pdf = PDF::loadView('sales.productOutAllPDF',compact('Product_Out', 'companyInfo'));
         return $pdf->download('sales.pdf');
     }
 
@@ -282,13 +284,9 @@ class SaleController extends Controller
     {
         $i = 0;
         $temp_sales = Temp_Sale::all();
-        $total_amount = \DB::select(\DB::raw("select SUM(price) as sum from temp_sales "));
-        // dd();// foreach($temp_sales as $object));
+        $total_amount = \DB::select(\DB::raw("select SUM(price * qty) as sum from temp_sales "));
+        //  dd($total_amount[0]->sum);// foreach($temp_sales as $object));
         
-// Dump array with object-arrays
-// dd($arrays[1]['price']);
-        //  Sale_New::insert($temp_sales->toArray());
-        // $sales_new = \DB::table("sales_new")->insertGetId([
             $input['po_no'] = rand();
             $input['total_amount'] = $total_amount[0]->sum;
             $input['date'] = date("Y/m/d");
@@ -296,10 +294,11 @@ class SaleController extends Controller
     // ]);
         Sale_New::create($input);
         // $this->exportProductOutAll();
-        foreach($temp_sales as $object)
-        {
-            $arrays[] = $object->toArray();
-            foreach($arrays as $item)
+        // foreach($temp_sales as $object)
+        // {
+            $arrays[] = $temp_sales->toArray();
+            // print_r($arrays);
+            foreach($arrays[0] as $item)
             {
                 // dd($item);
               
@@ -310,14 +309,29 @@ class SaleController extends Controller
                 $test['date'] = $item['date'];
                
                Product_Out::insert($test);
+                // print_r($test);
 
-            }
+
+            // }
 
 
            }
 
 
         $delete_temp_sales = \DB::select(\DB::raw("truncate table temp_sales"));
+        $Product_Out = \DB::select(\DB::raw('select * from product_out where po_no =' . $input['po_no']));
+    //    dd($Product_Out);
+        $companyInfo = Company::find(1);
+
+        $pdf = PDF::setOptions([
+            'images' => true,
+            'isHtml5ParserEnabled' => true, 
+            'isRemoteEnabled' => true
+        ])->loadView('sales.productOutPDF', compact('Product_Out', 'companyInfo'))->setPaper('a4', 'portrait')->stream();
+        return $pdf->download(date("Y-m-d H:i:s",time()).'_Product_Out.pdf');
+
+
+
         return response()->json([
             'success'    => true,
             'message'    => 'Products invoiced',
