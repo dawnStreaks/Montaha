@@ -96,11 +96,20 @@
                 url: "{{ url('generateInvoice') }}" + '/' + id ,
                 type: "GET",
                 dataType: "JSON",
-                success: function(data) {
-                    // alert("Success");
-                    // $('#products-out-table').DataTable().ajax.reload();
-                    alert("success");
+                    success: function(response) {
+                         w = window.open(window.location.href,"_blank");
+                         w.document.open();
+                         w.document.write(response.data);
+                         w.document.close();
+                         w.window.print();
+        
+                 
+                    
+                    $('#sales-table').DataTable().ajax.reload();
+
+
                 },
+            
                 error : function() {
                     alert("Nothing Data");
                 }

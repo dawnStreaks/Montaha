@@ -62,9 +62,9 @@ class ProductOutController extends Controller
            'qty'            => 'required',
            'date'           => 'required'
         ]);
+        $price = \DB::table('products')->select('price')->where('id', $request['product_id'] )->get();
 
-        Product_Out::create($request->all());
-
+        Product_Out::create(array_merge($request->all(), ['po_no' => rand(), 'price' => $price[0]->price ]));
         $product = Product::findOrFail($request->product_id);
         $product->qty -= $request->qty;
         $product->save();
@@ -180,7 +180,19 @@ class ProductOutController extends Controller
     public function exportProductOut(Request $request)
     {
         $idst = explode(",",$request->exportpdf);
+        $idst1 = array_values($idst);
+        // dd($idst1);
+        
         $Product_Out = Product_Out::find($idst);
+        $Product_Out = \DB::table('product_out')
+        ->join('products', 'products.id', '=', 'product_out.product_id')
+        ->join('barcodes', 'barcodes.id', '=', 'products.barcode_id')
+        ->join('customers', 'customers.id', '=', 'product_out.customer_id')
+        ->select('products.name as product_name', 'customers.name as customer_name', 'barcodes.name as barcode_name', 'product_out.price', 'product_out.qty', 'product_out.po_no', 'product_out.date', 'customers.address', 'customers.email')
+        ->where('product_out.id', $idst1)
+        ->get();
+        // dd($Product_Out);
+
         $companyInfo = Company::find(1);
 //  dd($Product_Out);
         $pdf = PDF::setOptions([

@@ -100,51 +100,52 @@
 <body>
 <div class="invoice-box">
     <table cellpadding="0" cellspacing="0">
-            {{-- <tr class="top">
+             <tr class="top">
                 <td colspan="5">
                     <table>
                         <tr>
-                            <td class="title">
-                                <img src="{{ asset('upload/logo/'.$companyInfo->logo) }}" style="width:100%; width:200px;">
+                            <td><span>
+                                <img src="{{ asset('upload/logo/'.$companyInfo->logo) }}" style="width:10%; height:10%;">
+                            {{-- </td>
+                            <td> --}}
+                                
+                                <h3>{{ $companyInfo->name }}</h3><br>
+                            </span>
+                          
+                                {{ $companyInfo->address }}
+                                                           
+                            {{ $companyInfo->email }}
                             </td>
-
-                            <td></td>
                             <td></td>
                             <td></td>
                             
-                            <td>
-                                Purchase Order #: {{rand(1000,10000)}}<br>
-                                Created: {{date("Y-m-d",time())}}<br>
-                                Due: February 1, 2015
-                            </td>
+                          
                         </tr>
                     </table>
                 </td>
             </tr>
-            
+             
             <tr class="information">
                 <td colspan="5">
                     <table>
                         <tr>
-                            <td>
-                                {{ $companyInfo->name }}<br>
-                                {{ $companyInfo->address }}<br>
-                                {{ $companyInfo->email }}
-                            </td>
-
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            
+                            <td>  Purchase Order #: </td><td>{{$Product_Out[0]->po_no}}</td>
+                            <td>Created: </td><td>{{$Product_Out[0]->date}}</td>
+                            <td> Date: </td><td>{{date("Y-m-d",time())}}</td>
+                            
+                            
+                            
                             
                             <td>
                                 {{-- {{$Product_Out[0]->customer->name}}<br>
                                 {{$Product_Out[0]->customer->address}}<br>
                                 {{$Product_Out[0]->customer->email}} 
-                            </td>
+                            </td>--}}
                         </tr>
                     </table>
                 </td>
-            </tr> --}}
+            </tr> 
 
        
             <tr class="heading">
@@ -169,15 +170,14 @@
             // dd($productData);
             if($i == $total){
                 $tr = '';
-            }else{
+            }
+            else {
                 $tr = 'last';
             }
             @endphp
             <tr class="item {{$tr}}">
-                {{-- <td>{{ $productData->product->name }}</td>
-                <td>{{ $productData->product->barcode->name }}</td> --}}
-                <td>{{ $productData->price }}</td>
-                <td>{{ $productData->qty }}</td>
+                <td>{{ $productData->product_name }}</td>
+                <td>{{ $productData->barcode_name }}</td>
                 <td>{{ $productData->price }}</td>
                 <td>{{ $productData->qty }}</td>
                 <td>{{ number_format($productData->price * $productData->qty) }}</td>
@@ -191,7 +191,10 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
+                <td>
+                    No. of Items: {{number_format($total)}}
+
+                </td>
                 <td>
                    Total: {{number_format($allTotal)}}
                 </td>

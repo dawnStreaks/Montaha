@@ -176,19 +176,26 @@ class SaleController1 extends Controller
     
     {        
 
-        $porder_no = \DB::select(\DB::raw("select po_no from sales_new where id = '$id'"));
+
+        $porder_no = \DB::table('sales_new')->select('po_no')->where('id', $id )->get();//\DB::select(\DB::raw("select po_no from sales_new where id = '$id'"));
         $po_no = $porder_no[0]->po_no; 
-        $Product_Out = \DB::select(\DB::raw("select * from product_out where po_no = '$po_no'"));
-        // dd($Product_Out);
-
-        // $Product_Out = $Product_Out->toArray();
-        // $idst = explode(",",$request->exportpdf);
-        // $Product_Out = Product_Out::find($idst);
-        // $companyInfo = Company::find(1);
+        $Product_Out = \DB::table('product_out')
+            ->join('products', 'products.id', '=', 'product_out.product_id')
+            ->join('barcodes', 'barcodes.id', '=', 'products.barcode_id')
+            ->select('products.name as product_name', 'barcodes.name as barcode_name', 'product_out.price', 'product_out.qty', 'product_out.po_no', 'product_out.date')
+            ->where('po_no', $po_no )
+            ->get();
+        
+        $companyInfo = Company::find(1);
 //  dd($Product_Out);
-$pdf = PDF::loadView('sales1.productOutPDF',compact('Product_Out'));
-return $pdf->download('sales1.pdf');
+       $view = view('sales1.productOutPDF', compact('Product_Out', 'companyInfo'))->render();
 
+        // return view('sales.productOutPDF', compact('Product_Out', 'companyInfo'))->render();    
+        return response()->json([
+            'success'    => true,
+            'message'    => 'Invoice Generated',
+            'data'      => $view
+        ]);
         // $pdf = PDF::setOptions([
         //     'images' => true,
         //     'isHtml5ParserEnabled' => true, 

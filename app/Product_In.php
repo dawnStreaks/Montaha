@@ -8,7 +8,7 @@ class Product_In extends Model
 {
     protected $table = 'product_in';
 
-    protected $fillable = ['product_id','supplier_id','qty','date'];
+    protected $fillable = ['product_id','user_id','qty','date'];
 
     protected $hidden = ['created_at','updated_at'];
 
@@ -17,8 +17,15 @@ class Product_In extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function supplier()
+    public function User()
     {
-        return $this->belongsTo(Supplier::class);
+        return $this->belongsTo(User::class);
     }
+
+    // public function Supplier()
+    // {
+    //     return $this->belongsTo(Supplier::class);
+    // }
+
+
 }

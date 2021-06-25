@@ -8,7 +8,7 @@
 @endsection
 
 @section('header') Product @endsection
-@section('description') This page about your all product @endsection
+@section('description') This page is about all your products @endsection
 
 @section('top')
 @endsection
@@ -37,12 +37,12 @@
             <table id="products-table" class="table table-striped">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>name</th>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Code</th>
                     <th>Barcode</th>
-                    <th>Barcode Image</th>
                     <th>price</th>
-                    <th>QTY</th>
+                    <th>Quantity</th>
                     <th>Image</th>
                     <th>Category</th>
                     <th></th>
@@ -107,13 +107,43 @@
 
                     $('#id').val(data.id);
                     $('#name').val(data.name);
-                    $('#barcode').val(data.barcode.name);
+                    // $('#barcode').val(data.barcode.name);
                     $('#price').val(data.price);
                     $('#qty').val(data.qty);
                     $('#category_id').val(data.category_id).trigger('change');
                 },
                 error : function() {
                     alert("Nothing Data");
+                }
+            });
+        }
+        function checkAvailableName(id) {
+            $.ajax({
+                url: "{{ url('checkAvailableName') }}" + '/' + id,
+                type: "GET",
+                dataType: "JSON",
+                success: function(data) {
+                    // alert("data");
+                    if(data.success)
+                    {
+                    $('#available').text(data.message);
+                    $('#name').val("");
+                    }
+                    else
+                    {
+                        $('#available').text("");
+                    // $('#name').val(data.name);
+ 
+                    }
+                    // $('#productName').text(data.name);
+                },
+                error: function() {
+                    swal({
+                            title: 'Oops...',
+                            text: data.message,
+                            type: 'error',
+                            timer: '1500'
+                        })
                 }
             });
         }
@@ -153,6 +183,13 @@
                 });
             });
         }
+        $(document).on("change","#product_id",function(){
+            checkAvailable(this.value);
+        });
+        $(document).on("change","#name",function(){
+            checkAvailableName(this.value);
+        });
+
 
         $(function(){
             $('#modal-form form').validator().on('submit', function (e) {

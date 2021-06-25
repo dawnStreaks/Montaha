@@ -47,7 +47,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('sales','SaleController');
     Route::get('/apiSales','SaleController@apiProductsOut')->name('api.productsOut1');
-     Route::get('/exportSalesAll','SaleController@exportProductOutAll')->name('exportPDF.productOutAll1');
+    Route::get('/exportSalesAll','SaleController@exportProductOutAll')->name('exportPDF.productOutAll1');
     Route::get('/exportSalesAllExcel','SaleController@exportExcel')->name('exportExcel.productOutAll1');
     Route::get('/exportSales','SaleController@exportProductOut')->name('exportPDF.productOut1');
     Route::get('/checkSalesAvailable/{id}','SaleController@checkAvailable')->name('checkSalesAvailable1');
@@ -64,6 +64,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('products','ProductController');
     Route::get('/apiProducts','ProductController@apiProducts')->name('api.products');
+    Route::get('/checkAvailableName/{id}','ProductController@checkAvailableName')->name('checkAvailableName');
+
 
     Route::resource('productsOut','ProductOutController');
     Route::get('/apiProductsOut','ProductOutController@apiProductsOut')->name('api.productsOut');

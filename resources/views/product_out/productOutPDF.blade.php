@@ -137,9 +137,9 @@
                             <td></td>
                             
                             <td>
-                                {{$Product_Out[0]->customer->name}}<br>
-                                {{$Product_Out[0]->customer->address}}<br>
-                                {{$Product_Out[0]->customer->email}}
+                                {{$Product_Out[0]->customer_name}}<br>
+                                {{$Product_Out[0]->address}}<br>
+                                {{$Product_Out[0]->email}}
                             </td>
                         </tr>
                     </table>
@@ -173,15 +173,15 @@
             @endphp
 
             <tr class="item {{$tr}}">
-                <td>{{ $productData->product->name }}</td>
-                <td>{{ $productData->product->barcode->name }}</td>
-                <td>{{ $productData->product->price }}</td>
+                <td>{{ $productData->product_name }}</td>
+                <td>{{ $productData->barcode_name }}</td>
+                <td>{{ $productData->price }}</td>
                 <td>{{ $productData->qty }}</td>
-                <td>{{ number_format($productData->product->price * $productData->qty) }}</td>
+                <td>{{ number_format($productData->price * $productData->qty) }}</td>
             </tr>
 
             @php 
-            $allTotal += $productData->product->price * $productData->qty; 
+            $allTotal += $productData->price * $productData->qty; 
             @endphp
             @endforeach
         

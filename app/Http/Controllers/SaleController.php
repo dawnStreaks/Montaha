@@ -319,25 +319,35 @@ class SaleController extends Controller
 
 
         $delete_temp_sales = \DB::select(\DB::raw("truncate table temp_sales"));
-        $Product_Out = \DB::select(\DB::raw('select * from product_out where po_no =' . $input['po_no']));
-    //    dd($Product_Out);
+        // $Product_Out = \DB::select(\DB::raw('select * from product_out where po_no =' . $input['po_no']));
+        $Product_Out = \DB::table('product_out')
+            ->join('products', 'products.id', '=', 'product_out.product_id')
+            ->join('barcodes', 'barcodes.id', '=', 'products.barcode_id')
+            ->select('products.name as product_name', 'barcodes.name as barcode_name', 'product_out.price', 'product_out.qty', 'product_out.po_no', 'product_out.date')
+            ->where('po_no', $input['po_no'] )
+            ->get();
+        
         $companyInfo = Company::find(1);
 
-        $pdf = PDF::setOptions([
-            'images' => true,
-            'isHtml5ParserEnabled' => true, 
-            'isRemoteEnabled' => true
-        ])->loadView('sales.productOutPDF', compact('Product_Out', 'companyInfo'))->setPaper('a4', 'portrait')->stream();
-        return $pdf->download(date("Y-m-d H:i:s",time()).'_Product_Out.pdf');
+    //    dd($Product_Out);
 
+        // $pdf = PDF::setOptions([
+        //     'images' => true,
+        //     'isHtml5ParserEnabled' => true, 
+        //     'isRemoteEnabled' => true
+        // ])->loadView('sales.productOutPDF', compact('Product_Out', 'companyInfo'))->setPaper('a4', 'portrait')->stream('test.pdf');
+        // // $pdf->download(date("Y-m-d H:i:s",time()).'_Product_Out.pdf');
+        // $pdf = PDF::loadView('sales.productOutPDF', compact('Product_Out', 'companyInfo'));
+        // $pdf->stream('my.pdf',array('Attachment'=>0));
+        $view = view('sales.productOutPDF', compact('Product_Out', 'companyInfo'))->render();
 
-
+        // return view('sales.productOutPDF', compact('Product_Out', 'companyInfo'))->render();    
         return response()->json([
             'success'    => true,
-            'message'    => 'Products invoiced',
-            // 'data' => $input
+            'message'    => 'Order Completed',
+            'data'      => $view
         ]);
-    
+    }
 
     }
-}
+

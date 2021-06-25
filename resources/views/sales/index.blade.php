@@ -12,8 +12,10 @@
     <link rel="stylesheet" href="{{ asset('assets/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}">
 @endsection
 
-@section('header') Products Out @endsection
-@section('description') This page about your sales & invoice @endsection
+@section('header')
+{{-- <img src="{{ asset('upload/logo/logo.jpeg') }}" alt="logo" style="width:100%; width:50px;/> --}}
+  <h1>Montaha Couture</h1> @endsection
+@section('description') Sales & Invoice @endsection
 
 @section('top')
 @endsection
@@ -35,7 +37,7 @@
                     {{ csrf_field() }} {{ method_field('POST') }}
     
                   <div class="form-group">
-                    <input id="barcode_name" name="barcode_name" onmouseover="this.focus();" type="text">
+                    <input id="barcode_name" name="barcode_name" onmouseover="this.focus();" type="text" style="padding-left:10px;">
                   </div>
                 {{-- <button type="submit" class="btn btn-primary">Submit</button> --}}
                 </form>
@@ -60,7 +62,7 @@
                     <th>ID</th>
                     <th>Products</th>
                     <th>Price</th>
-                    <th>QTY</th>
+                    <th>Quantity</th>
                     <th>Date</th>
                     <th></th>
                 </tr>
@@ -154,12 +156,21 @@
         $(document).on("click","#order_completed",function(){
             $('#barcode_name').val("");
 
+
+         
             $.ajax({
                 url: "{{ url('order_complete') }}" ,
                 type: "GET",
                 dataType: "JSON",
-                success: function(data) {
-                    // alert("Success");
+                success: function(response) {
+            w = window.open(window.location.href,"_blank");
+            w.document.open();
+            w.document.write(response.data);
+            w.document.close();
+            w.window.print();
+        
+                    
+                    
                     $('#products-out-table').DataTable().ajax.reload();
 
 

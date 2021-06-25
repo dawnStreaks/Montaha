@@ -99,7 +99,7 @@
                     $('#name').val(data.name);
                 },
                 error : function() {
-                    alert("Nothing Data");
+                    alert("Please try again");
                 }
             });
         }

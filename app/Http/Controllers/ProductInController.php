@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 use App\Exports\ExportProductIn;
 use App\Product;
 use App\Product_In;
-use App\Supplier;
+use App\User;
 use PDF;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -29,12 +29,12 @@ class ProductInController extends Controller
             ->get()
             ->pluck('name','id');
 
-        $suppliers = Supplier::orderBy('name','ASC')
+        $users = User::orderBy('name','ASC')
             ->get()
             ->pluck('name','id');
 
         $invoice_data = Product_In::all();
-        return view('product_in.index', compact('products','suppliers','invoice_data'));
+        return view('product_in.index', compact('products','users','invoice_data'));
     }
 
     /**
@@ -57,7 +57,7 @@ class ProductInController extends Controller
     {
         $this->validate($request, [
             'product_id'     => 'required',
-            'supplier_id'    => 'required',
+            'user_id'    => 'required',
             'qty'            => 'required',
             'date'        => 'required'
         ]);
@@ -109,7 +109,7 @@ class ProductInController extends Controller
     {
         $this->validate($request, [
             'product_id'     => 'required',
-            'supplier_id'    => 'required',
+            'user_id'    => 'required',
             'qty'            => 'required',
             'date'        => 'required'
         ]);
@@ -152,8 +152,8 @@ class ProductInController extends Controller
             ->addColumn('products_name', function ($product){
                 return $product->product->name;
             })
-            ->addColumn('supplier_name', function ($product){
-                return $product->supplier->name;
+            ->addColumn('user_name', function ($product){
+                return $product->user->name;
             })
             ->addColumn('multiple_export', function ($product){
                 return '<input type="checkbox" name="exportpdf[]" class="checkbox" value="'. $product->id .'">';
@@ -164,7 +164,7 @@ class ProductInController extends Controller
 
 
             })
-            ->rawColumns(['multiple_export','products_name','supplier_name','action'])->make(true);
+            ->rawColumns(['multiple_export','products_name','user_name','action'])->make(true);
 
     }
 

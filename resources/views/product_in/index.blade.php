@@ -45,8 +45,8 @@
                 <tr>
                     <th>ID</th>
                     <th>Products</th>
-                    <th>Supplier</th>
-                    <th>QTY</th>
+                    <th>User</th>
+                    <th>Quantity</th>
                     <th>Date</th>
                     <th></th>
                 </tr>
@@ -113,7 +113,7 @@
             columns: [
                 {data: 'id', name: 'id'},
                 {data: 'products_name', name: 'products_name'},
-                {data: 'supplier_name', name: 'supplier_name'},
+                {data: 'user_name', name: 'user_name'},
                 {data: 'qty', name: 'qty'},
                 {data: 'date', name: 'date'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
@@ -142,7 +142,7 @@
 
                     $('#id').val(data.id);
                     $('#product_id').val(data.product_id).trigger('change');
-                    $('#supplier_id').val(data.supplier_id).trigger('change');
+                    $('#user_id').val(data.user_id).trigger('change');
                     console.log($('#product_id').val());
                     $('#qty').val(data.qty);
                     $('#date').val(data.date);

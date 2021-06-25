@@ -41,14 +41,15 @@ class ProductController extends Controller
             'name'          => 'required|string',
             'price'         => 'required',
             'qty'           => 'required',
-            'barcode'       => 'required',
+            // 'barcode'       => 'required',
             'category_id'   => 'required',
         ]);
 
         $input = $request->all();
 
         $barcode = new Barcode;
-        $barcode->name = $input['barcode'];
+        // if($input['barcode'])
+        $barcode->name = $input['name'];
         $barcode->save();
         
 
@@ -58,9 +59,17 @@ class ProductController extends Controller
             $input['image'] = '/upload/products/'.str_slug($input['name'], '-').'.'.$request->image->getClientOriginalExtension();
             $request->image->move(public_path('/upload/products/'), $input['image']);
         }
-
+    // if($input['barcode'])
         $input['barcode_id'] = $barcode->id;
         Product::create($input);
+        $bc = \DB::table('products')->select('id')->where('barcode_id', $input['barcode_id'] )->get();
+        // dd($bc[0]->id);
+        $product = Product::findOrFail($bc[0]->id);
+        $input['barcode'] = $product->id. '-' .$barcode->name;
+        $bcode = Barcode::findOrFail($input['barcode_id']);
+        $bcode->name = $input['barcode'];
+        $bcode->save();
+        
 
         return response()->json([
             'success' => true,
@@ -68,6 +77,28 @@ class ProductController extends Controller
         ]);
 
     }
+
+    public function checkAvailableName($id)
+    {
+        $bc = \DB::table('products')->select('name')->where('name', $id )->get();
+        // dd(count($bc));
+        if(count($bc) > 0)
+        {
+        return response()->json([
+            'success' => true,
+            'message' => 'Item exist',
+            
+        ]);
+        }
+        else{
+            return response()->json([
+                'success' => false,
+                'message' => '',
+                
+            ]);
+
+        }
+        }
 
     /**
      * Show the form for editing the specified resource.
@@ -82,6 +113,7 @@ class ProductController extends Controller
             ->pluck('name','id');
         $product = Product::find($id);
         $product['barcode'] = $product->barcode->name;
+        
         return $product;
     }
 
@@ -102,7 +134,7 @@ class ProductController extends Controller
             'name'          => 'required|string',
             'price'         => 'required',
             'qty'           => 'required',
-            'barcode'       => 'required',
+            // 'barcode'       => 'required',
             'category_id'   => 'required',
         ]);
 
@@ -119,9 +151,9 @@ class ProductController extends Controller
             $request->image->move(public_path('/upload/products/'), $input['image']);
         }
 
-        $barcode = Barcode::findOrFail($produk->barcode_id);
-        $barcode->name = $input['barcode'];
-        $barcode->save();
+        // $barcode = Barcode::findOrFail($produk->barcode_id);
+        // $barcode->name = $input['barcode'];
+        // $barcode->save();
 
         $produk->update($input);
 

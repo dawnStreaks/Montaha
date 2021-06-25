@@ -19,14 +19,15 @@
                         <div class="form-group">
                             <label>Name</label>
                             <input type="text" class="form-control" id="name" name="name" required>
+                            <span class="text-danger"><span id="available"></span>.</span>
                             <span class="help-block with-errors"></span>
                         </div>
 
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label>Barcode</label>
                             <input type="text" class="form-control" id="barcode" name="barcode" required>
                             <span class="help-block with-errors"></span>
-                        </div>
+                        </div> --}}
 
                         <div class="form-group">
                             <label>Price</label>
