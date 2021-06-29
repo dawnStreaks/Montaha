@@ -202,7 +202,9 @@ class ProductController extends Controller
                 return $product->barcode->name;
             })
             ->addColumn('barcode_image', function ($product){
-                return '<a href="https://barcode.tec-it.com/barcode.ashx?data='.$product->barcode->name.'&code=Code128&dpi=96&imagetype=Png&download=true" style="margin: 0 auto;display: block;text-align:center;" title="Download Barcode" target="_blank" download><img class="img-responsive img-thumbnail" src="https://barcode.tec-it.com/barcode.ashx?data='.$product->barcode->name.'&code=Code128&dpi=96"><br>Download</a>';
+                // return '<a href="https://barcode.tec-it.com/barcode.ashx?data='.$product->barcode->name.'&code=Code128&dpi=96&imagetype=Png&download=true" style="margin: 0 auto;display: block;text-align:center;" title="Download Barcode" target="_blank" download><img class="img-responsive img-thumbnail" src="https://barcode.tec-it.com/barcode.ashx?data='.$product->barcode->name.'&code=Code128&dpi=96"><br>Download</a>';
+                return '<a id="printBarcode" href="https://barcode.tec-it.com/barcode.ashx?data='.$product->barcode->name.'&code=Code128&dpi=96&imagetype=Png&download=false" style="margin: 0 auto;display: block;text-align:center;" title="Print Barcode" target="_blank" onclick="printBarcode(this.id)" ><img class="img-responsive img-thumbnail" src="https://barcode.tec-it.com/barcode.ashx?data='.$product->barcode->name.'&code=Code128&dpi=96"></a>';
+
             })
             
             ->addColumn('show_photo', function($product){

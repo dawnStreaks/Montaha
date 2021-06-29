@@ -97,12 +97,14 @@
                 type: "GET",
                 dataType: "JSON",
                     success: function(response) {
-                         w = window.open(window.location.href,"_blank");
-                         w.document.open();
-                         w.document.write(response.data);
-                         w.document.close();
-                         w.window.print();
-        
+        // alert(response.data);
+                        var mywindow = window.open('', 'PRINT', 'height=400,width=600');
+            mywindow.document.write(response.data);
+            mywindow.document.close(); // necessary for IE >= 10
+            mywindow.focus(); // necessary for IE >= 10*/
+            mywindow.print();
+            mywindow.close();
+            return true;
                  
                     
                     $('#sales-table').DataTable().ajax.reload();
@@ -214,5 +216,7 @@
             });
         });
     </script>
+
+    
 
 @endsection

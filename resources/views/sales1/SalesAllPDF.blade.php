@@ -37,6 +37,7 @@
         background-color: #4CAF50;
         color: white;
     }
+    
 </style>
 
 <table id="categories" width="100%">

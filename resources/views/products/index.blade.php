@@ -93,6 +93,20 @@
             $('.modal-title').text('Add Products');
         }
 
+        function printBarcode(elem) {
+            // window.print();
+            var mywindow = window.open('', 'PRINT', 'height=400,width=600');
+            mywindow.document.write('<html><head><title>' + document.title  + '</title>');
+            mywindow.document.write('</head><body >');
+            mywindow.document.write(document.getElementById(elem).innerHTML);
+            mywindow.document.write('</body></html>');
+            mywindow.document.close(); // necessary for IE >= 10
+            mywindow.focus(); // necessary for IE >= 10*/
+            mywindow.print();
+            mywindow.close();
+            return true;
+        }
+
         function editForm(id) {
             save_method = 'edit';
             $('input[name=_method]').val('PATCH');
@@ -189,6 +203,8 @@
         $(document).on("change","#name",function(){
             checkAvailableName(this.value);
         });
+      
+    
 
 
         $(function(){

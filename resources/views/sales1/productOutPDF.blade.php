@@ -67,7 +67,14 @@
             border-top: 2px solid #eee;
             font-weight: bold;
         }
-        
+        @media print {
+        html, body {
+         /* max-width: 80mm; */
+         /* height:100%; */
+         transform: scale(0.5);
+         position:absolute;
+        }
+     }
         @media only screen and (max-width: 600px) {
             .invoice-box table tr.top table td {
                 width: 100%;
