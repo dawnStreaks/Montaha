@@ -1,0 +1,300 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Category;
+use App\Customer;
+use App\Exports\ExportOrders;
+use App\Product;
+use App\Product_Out;
+use App\Company;
+use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
+use PDF;
+use Illuminate\Support\Facades\Response as FacadeResponse;
+use Auth;
+use App\User;
+use App\Order;
+
+class OrderController extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware('role:admin,staff');
+    }
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $products = Product::orderBy('name','ASC')
+            ->get()
+            ->pluck('name','id');
+        
+
+        // $customers = Customer::orderBy('name','ASC')
+        //     ->get()
+        //     ->pluck('name','id');
+
+
+        $invoice_data = Order::all();
+        // return view('orders.index', compact('products','customers', 'invoice_data'));
+         return view('orders.index', compact('products', 'invoice_data'));
+
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+           'product_id'     => 'required',
+           'customer_name'    => 'required',
+           'price'          => 'required',
+           'qty'            => 'required',
+           'order_status'   => 'required',
+           'date'           => 'required'
+        ]);
+        // $price = \DB::table('products')->select('price')->where('id', $request['product_id'] )->get();
+        $subtotal = $request->price * $request->qty ;
+        if($request->discount > 0)
+        $subtotal = $subtotal - ($subtotal* ($request->discount/100));
+        Order::create(array_merge($request->all(), ['po_no' => rand(1, 99999), 'price' => $request->price, 'refund_status' => 0, 'subtotal' => $subtotal, 'cashier' => Auth::user()->name]));
+        $product = Product::findOrFail($request->product_id);
+        $product->qty -= $request->qty;
+        $product->save();
+
+        return response()->json([
+            'success'    => true,
+            'message'    => 'Products Out Created'
+        ]);
+
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        $Product_Out = Order::find($id);
+        return $Product_Out;
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        $this->validate($request, [
+            'product_id'     => 'required',
+            'customer_name'  => 'required',
+            'price'          => 'required',
+            'qty'            => 'required',
+            'date'           => 'required',
+            'order_status'   => 'required',
+            'discount'       => 'required',
+
+            
+        ]);
+
+        $order = Order::findOrFail($id);
+        $subtotal = $request->price * $request->qty ;
+
+          if($request->discount > 0)
+            $subtotal = $subtotal - ($subtotal* ($request->discount/100));
+        
+        $order->update(array_merge($request->all(), ['subtotal' => $subtotal, 'cashier' => Auth::user()->name]));
+
+        $product = Product::findOrFail($request->product_id);
+        $product->qty -= $request->qty;
+        $product->update();
+
+        return response()->json([
+            'success'    => true,
+            'message'    => 'Product Out Updated'
+        ]);
+    }
+
+    public function refund($id)
+    {
+        
+
+        $Product_Out = Order::findOrFail($id);
+        // Refund::create(['po_no' => $Product_Out->po_no, 'price' => $Product_Out->price, 'qty' => $Product_Out->qty, 'discount' => $Product_Out->discount, 'refund_amount' => $Product_Out->price, 'subtotal' => $subtotal, 'cashier' => Auth::user()->name]));
+
+        $Product_Out->price = 0;
+        $Product_Out->qty = 0;
+        $subtotal = $Product_Out->price * $Product_Out->qty ; //in case refund amount is included, 
+
+          if($Product_Out->discount > 0)
+            $subtotal = $subtotal - ($subtotal* ($Product_Out->discount/100));
+        
+        $Product_Out->update(['subtotal' => $subtotal,  'refund_status' => 1]);
+
+        $product = Product::findOrFail($Product_Out->product_id);
+        $product->qty += $Product_Out->qty;
+        $product->update();
+
+
+        return response()->json([
+            'success'    => true,
+            'message'    => 'Refund Succesfull'
+        ]);
+    }
+
+
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        Order::destroy($id);
+
+        return response()->json([
+            'success'    => true,
+            'message'    => 'Products Delete Deleted'
+        ]);
+    }
+
+
+
+    public function apiOrders(){
+        $order = Order::all();
+
+        return Datatables::of($order)
+            ->addColumn('products_name', function ($order){
+                return $order->product->name;
+            })
+            ->addColumn('price', function ($order){
+                return $order->price;
+            })
+            ->addColumn('po_no', function ($order){
+                return $order->po_no;
+            })
+
+            ->addColumn('order_status', function ($order){
+                if($order->order_status == 0)
+                    return "Payment Received";
+                else if($order->order_status == 1)
+                    return "Payment Pending";
+                else
+                    return " order Delivered & complete ". $order->subtotal . "KWD  "  . $order->product->name ." - " . $order->qty. " to ". $order->customer_name . " on ". date("Y/m/d");
+            })
+            ->addColumn('discount', function ($order){
+
+                if($order->discount == NULL || $order->discount == 0)
+                return 0;
+                else
+                return $order->discount . "%";
+            })
+            ->addColumn('customer_name', function ($order){
+                return $order->customer_name;
+            })
+            ->addColumn('cashier', function ($order){
+                return Auth::user()->name;
+            })
+            ->addColumn('refund_status', function ($order){
+                if($order->refund_status == 0)
+                    return "No";
+                else
+                    return "Refund of ". $order->subtotal . "KWD  "  . $order->product->name ." - " . $order->qty. " by ". $order->customer->name . " on ". date("Y/m/d");
+            })
+
+            ->addColumn('multiple_export', function ($order){
+                return '<input type="checkbox" name="exportpdf[]" class="checkbox" value="'. $order->id .'">';
+            })
+            ->addColumn('action', function($order){
+                return '<a onclick="editForm('. $order->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a> ' .
+                    '<a onclick="deleteData('. $order->id .')" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-trash"></i> Delete</a>';
+                    '<a onclick="refund('. $order->id .')" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-repeat"></i> Refund</a>';
+
+
+            })
+            ->rawColumns(['multiple_export','products_name','price', 'po_no', 'order_status', 'discount','customer_name', 'refund_status','cashier', 'action'])->make(true);
+
+    }
+
+    public function exportProductOutAll()
+    {
+        $Product_Out = Order::all();
+        $pdf = PDF::loadView('orders.productOutAllPDF',compact('Product_Out'));
+        return $pdf->download('product_out.pdf');
+    }
+
+    public function exportProductOut(Request $request)
+    {
+        $idst = explode(",",$request->exportpdf);
+        $idst1 = array_values($idst);
+        // dd($idst1);
+        
+        $Product_Out = Order::find($idst);
+        // $Product_Out = \DB::table('product_out')
+        // ->join('products', 'products.id', '=', 'product_out.product_id')
+        // ->join('barcodes', 'barcodes.id', '=', 'products.barcode_id')
+        // ->join('customers', 'customers.id', '=', 'product_out.customer_id')
+        // ->select('products.name as product_name', 'customers.name as customer_name', 'barcodes.name as barcode_name', 'product_out.price', 'product_out.qty', 'product_out.po_no', 'product_out.date', 'customers.address', 'customers.email')
+        // ->where('product_out.id', $idst1)
+        // ->get();
+        // dd($Product_Out);
+
+        $companyInfo = Company::find(1);
+//  dd($Product_Out);
+        $pdf = PDF::setOptions([
+            'images' => true,
+            'isHtml5ParserEnabled' => true, 
+            'isRemoteEnabled' => true
+        ])->loadView('orders.productOutPDF', compact('Product_Out', 'companyInfo'));//->setPaper('a4', 'portrait')->stream();
+        // return $pdf->download('Product_Out.pdf');
+        return $pdf->download(date("Y-m-d H:i:s",time()).'_Product_Out.pdf');
+
+    }
+
+    public function exportExcel()
+    {
+        return (new ExportOrders)->download('product_out.xlsx');
+    }
+
+    public function checkAvailable($id)
+    {
+        $Product = Product::findOrFail($id);
+        return $Product;
+    }
+}

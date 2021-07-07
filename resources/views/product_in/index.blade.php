@@ -90,8 +90,10 @@
             //Date picker
             $('#date').datepicker({
                 autoclose: true,
-                // dateFormat: 'yyyy-mm-dd'
+                 format: 'dd-mm-yy',
+                 
             })
+            $('#date').datepicker('setDate', new Date());
 
             //Colorpicker
             $('.my-colorpicker1').colorpicker()

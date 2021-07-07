@@ -37,7 +37,7 @@
 
                         <div class="form-group">
                             <label>Quantity</label>
-                            <input type="text" class="form-control" id="qty" name="qty" value="0" required>
+                            <input type="text" class="form-control" id="qty" name="qty" value="1" required>
                             <span class="help-block with-errors"></span>
                         </div>
 
@@ -50,7 +50,7 @@
                         <div class="form-group">
                             <label>Category</label>
                             <div>
-                                {!! Form::select('category_id', $category, null, ['class' => 'form-control select2', 'placeholder' => '', 'id' => 'category_id', 'required']) !!}
+                                {!! Form::select('category_id', $category, 0 , ['class' => 'form-control select2', 'placeholder' => 'please select', 'id' => 'category_id', 'required']) !!}
                                 <span class="help-block with-errors"></span>
                             </div>
                         </div>

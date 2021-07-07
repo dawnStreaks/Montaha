@@ -9,9 +9,14 @@ use App\Sale_New;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use App\Company;
+use App\Customer;
+use App\Product;
+use App\Product_Out;
 
 use Excel;
 use PDF;
+use Auth;
+
 
 
 class SaleController1 extends Controller
@@ -27,8 +32,13 @@ class SaleController1 extends Controller
      */
     public function index()
     {
+        $customers = Customer::orderBy('name','ASC')
+            ->get()
+            ->pluck('name','id');
+
+
         $sales = Sale_New::all();
-        return view('sales1.index');
+        return view('sales1.index' , compact('customers'));
     }
 
     /**
@@ -50,12 +60,12 @@ class SaleController1 extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'po_no'      => 'required',
+            'customer_id'      => 'required',
             'total_amount'    => 'required',
             'date'     => 'required',
         ]);
 
-        Sale_New::create($request->all());
+        Sale_New::create(array_merge($request->all(), ['po_no' => rand(1, 99999), 'cashier' => Auth::user()->name, 'refund_status' => 0]));
 
         return response()->json([
             'success'    => true,
@@ -99,7 +109,7 @@ class SaleController1 extends Controller
         $sale = Sale_New::findOrFail($id);
 
         $this->validate($request, [
-            'po_no'      => 'required',
+            'customer_id'      => 'required',
             'total_amount'    => 'required',
             'date'     => 'required',
         ]);
@@ -133,12 +143,27 @@ class SaleController1 extends Controller
         $sales = Sale_New::all();
 
         return Datatables::of($sales)
+        ->addColumn('customer_name', function ($sales){
+            return $sales->customer->name;
+        })
+        ->addColumn('cashier', function ($sales){
+            return $sales->cashier;
+        })
+        ->addColumn('refund_status', function ($sales){
+            if($sales->refund_status == 0)
+                return "No";
+            else
+                return "Refund of ". $sales->total_amount . "KWD  "  .  " for ". $sales->customer->name . " on ". date("Y/m/d") . "by ". Auth::user()->name;
+        })
+
             ->addColumn('action', function($sales){
                 return '<a onclick="editForm('. $sales->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a> ' .
                     '<a onclick="deleteData('. $sales->id .')" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-trash"></i> Delete</a>' .
-                    '<a onclick="generateInvoice('. $sales->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-file"></i> Generate Invoice</a>';
+                    '<a onclick="generateInvoice('. $sales->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-file"></i> Generate Invoice</a>'.
+                    '<a onclick="refund('. $sales->id .')" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-repeat"></i> Refund</a>';
+
             })
-            ->rawColumns(['action'])->make(true);
+            ->rawColumns(['customer_name', 'cashier', 'refund_status','action'])->make(true);
     }
 
     public function ImportExcel(Request $request)
@@ -170,6 +195,47 @@ class SaleController1 extends Controller
     public function exportExcel()
     {
         return (new ExportSales())->download('sales.xlsx');
+    }
+
+    public function refund($id)
+    {
+        $sale_new = Sale_New::findOrFail($id);
+
+        $porder_no = \DB::table('sales_new')->select('po_no')->where('id', $id )->get();//\DB::select(\DB::raw("select po_no from sales_new where id = '$id'"));
+        $po_no = $porder_no[0]->po_no; 
+        $Product_Out = \DB::table('product_out')
+                       ->where('po_no', $po_no )
+                       ->get();
+       
+
+        // $Product_Out = Order::findOrFail($id);
+        // Refund::create(['po_no' => $Product_Out->po_no, 'price' => $Product_Out->price, 'qty' => $Product_Out->qty, 'discount' => $Product_Out->discount, 'refund_amount' => $Product_Out->price, 'subtotal' => $subtotal, 'cashier' => Auth::user()->name]));
+        foreach ($Product_Out as  $product_out) {
+            $refund_status = "Refund of ". $product_out->subtotal . "KWD  "   ." Qty x Price " . $product_out->qty. " x ". $product_out->price . " on ". date("Y/m/d"). "by ". $product_out->cashier;
+
+            $product = Product::findOrFail($product_out->product_id);
+            $product->qty += $product_out->qty;
+            $product->update();
+        $product_out->price = 0;
+        $product_out->qty = 0;
+        // $subtotal = $product_out->price * $product_out->qty ; //in case refund amount is included, 
+
+        //   if($product_out->discount > 0)
+        //     $subtotal = $subtotal - ($subtotal* ($product_out->discount/100));
+        
+            $product_out->update(['subtotal' => $subtotal,  'refund_status' => $refund_status]);
+        
+     
+       
+
+        }
+        $refund_status1 = "Refund of ". $sale_new->total_amount . "KWD  "  . " on ". date("Y/m/d"). "by ". $sale_new->cashier;
+
+        $sale_new->update(['total_amount' => 0,  'refund_status' =>  $refund_status1]);
+        return response()->json([
+            'success'    => true,
+            'message'    => 'Refund Succesfull'
+        ]);
     }
 
     public function generateInvoice($id)

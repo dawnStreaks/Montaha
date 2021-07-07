@@ -13,6 +13,7 @@ use App\Sale_New;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use PDF;
+use Auth;
 // use Barryvdh\DomPDF\Facade as PDF;
 use App\Barcode;
 use Illuminate\Support\Facades\Response;
@@ -75,10 +76,7 @@ class SaleController extends Controller
 
         // Product_Out::create($request->all());
 
-        // $product = Product::findOrFail($request->product_id);
-        // $product->qty -= $request->qty;
-        // $product->save();
-
+       
         // return response()->json([
         //     'success'    => true,
         //     'message'    => 'Products Out Created'
@@ -102,9 +100,10 @@ class SaleController extends Controller
         $input['product_id'] = $find_product[0]->id;
         $input['price'] = $find_product[0]->price;
         $input['customer_id'] = 3;
-
         $input['po_no'] = $i++;
         $input['qty'] = 1;
+        $input['discount'] = 0;
+        $input['subtotal'] = $find_product[0]->price * 1;
         $input['date'] = date("Y/m/d");
        
         // Product_Out::create($input);
@@ -117,7 +116,7 @@ class SaleController extends Controller
 
         return response()->json([
             'success'    => true,
-            'message'    => 'Product Out Updated'
+            'message'    => ' '
         ]);
     }
 
@@ -159,12 +158,19 @@ class SaleController extends Controller
         $this->validate($request, [
             'product_id'     => 'required',
             'price'          => 'required',
+            'discount'            => 'required',
             'qty'            => 'required',
             'date'           => 'required'
         ]);
 
         $Temp_Sale = Temp_Sale::findOrFail($id);
-        $Temp_Sale->update($request->all());
+        if($request->discount != $Temp_Sale->discount)
+        {
+          $subtotal = $request->price * $request->qty ;
+          if($request->discount > 0)
+            $subtotal = $subtotal - ($subtotal* ($request->discount/100));
+       }
+        $Temp_Sale->update(array_merge($request->all(), ['subtotal' => $subtotal]));
 
         $product = Product::findOrFail($request->product_id);
         $product->qty -= $request->qty;
@@ -172,7 +178,7 @@ class SaleController extends Controller
 
         return response()->json([
             'success'    => true,
-            'message'    => 'Product Out Updated'
+            'message'    => 'Changed Successfully'
         ]);
     }
 
@@ -193,9 +199,8 @@ class SaleController extends Controller
         $input['customer_id'] = "";
         $input['qty'] = 1;
         $input['date'] = date("Y/m/d");
-
-
-
+        $input['discount'] = 0;
+        $input['subtotal'] = $find_product[0]->price * 1;
         // Product_Out::create($request->all());
 
         $product = Product::findOrFail($request->product_id);
@@ -284,31 +289,57 @@ class SaleController extends Controller
     {
         $i = 0;
         $temp_sales = Temp_Sale::all();
-        $total_amount = \DB::select(\DB::raw("select SUM(price * qty) as sum from temp_sales "));
+        $total_amount = \DB::select(\DB::raw("select SUM((price - (price * (discount/100))) * qty) as sum from temp_sales "));
         //  dd($total_amount[0]->sum);// foreach($temp_sales as $object));
         
-            $input['po_no'] = rand();
+            $input['po_no'] = rand(1, 99999);
             $input['total_amount'] = $total_amount[0]->sum;
             $input['date'] = date("Y/m/d");
+            $input['customer_id'] = 3;
+            $input['cashier'] = Auth::user()->name;
+            $input['refund_status'] = 0;
+
+
         // 'invoice_link' => "/sales"
     // ]);
         Sale_New::create($input);
         // $this->exportProductOutAll();
         // foreach($temp_sales as $object)
         // {
+            
             $arrays[] = $temp_sales->toArray();
             // print_r($arrays);
             foreach($arrays[0] as $item)
             {
                 // dd($item);
-              
+          
                 $test['po_no'] = $input['po_no'];
                 $test['product_id'] = $item['product_id'];
+                if($item['discount']>0)    
+                {
+                $test['price'] = $item['price'] - ( $item['price']* ( $item['discount']/100));
+                $test['discount'] = $item['discount'];    
+            }
+                else{
                 $test['price'] = $item['price'];
+                $test['discount'] = 0;
+                }
                 $test['qty'] = $item['qty'];
                 $test['date'] = $item['date'];
+                $test['refund_status'] = 0;
                
+                $test['subtotal'] =  $test['price'] * $item['qty']; 
+                $test['cashier'] = Auth::user()->name;
+                $test['customer_id'] = 3;
+
+
+
+                
                Product_Out::insert($test);
+               $product = Product::findOrFail($item['product_id']);
+               $product->qty -= $item['qty'];
+               $product->save();
+
                 // print_r($test);
 
 
@@ -349,5 +380,6 @@ class SaleController extends Controller
         ]);
     }
 
-    }
+
+}
 

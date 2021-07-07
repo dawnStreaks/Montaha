@@ -8,7 +8,7 @@ class Product_Out extends Model
 {
     protected $table = 'product_out';
 
-    protected $fillable = ['product_id','po_no','price','customer_id','qty','date'];
+    protected $fillable = ['product_id','po_no','price','customer_id','qty','refund_status','discount', 'subtotal', 'cashier', 'date'];
 
 
     protected $hidden = ['created_at','updated_at'];
@@ -22,4 +22,10 @@ class Product_Out extends Model
     {
         return $this->belongsTo(Customer::class);
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+   
 }

@@ -46,11 +46,16 @@
                 <tr>
                     <th>Multiple Export Invoice</th>
                     <th>ID</th>
+                    <th>PO_No</th>
                     <th>Products</th>
                     <th>Price</th>
                     <th>QTY</th>
+                    <th>Discount</th>
+                    <th>Subtotal</th>
                     <th>Date</th>
-                    <th>PO_No</th>
+                    <th>Customer Name</th>
+                    <th>Refund Status</th>
+                    <th> Cashier </th>
                     <th></th>
 
                 </tr>
@@ -93,8 +98,11 @@
             //Date picker
             $('#date').datepicker({
                 autoclose: true,
-                // dateFormat: 'yyyy-mm-dd'
+                 format: 'dd-mm-yy',
+                 
             })
+            $('#date').datepicker('setDate', new Date());
+
 
             //Colorpicker
             $('.my-colorpicker1').colorpicker()
@@ -116,11 +124,16 @@
             columns: [
                 {data: 'multiple_export', name: 'multiple_export'},
                 {data: 'id', name: 'id'},
+                {data: 'po_no', name: 'po_no'},
                 {data: 'products_name', name: 'products_name'},
                 {data: 'price', name: 'price'},
                 {data: 'qty', name: 'qty'},
+                {data: 'discount', name: 'discount'},
+                {data: 'subtotal', name: 'subtotal'},
                 {data: 'date', name: 'date'},
-                {data: 'po_no', name: 'po_no'},
+                {data: 'customer_name', name: 'customer_name'},
+                {data: 'refund_status', name: 'refund_status'},
+                {data: 'cashier', name: 'cashier'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ]
         });
@@ -149,12 +162,13 @@
                 success: function(data) {
                     $('#modal-form').modal('show');
                     $('.modal-title').text('Edit Products');
-
                     $('#id').val(data.id);
                     $('#product_id').val(data.product_id).trigger('change');
                     $('#customer_id').val(data.customer_id).trigger('change');
                     $('#qty').val(data.qty);
-                    $('#date').val(data.date);
+                    // $('#date').val(data.date);
+                    $('#discount').val(data.discount);
+
                 },
                 error : function() {
                     alert("Nothing Data");
@@ -171,7 +185,54 @@
                 success: function(data) {
                     $('#available').text(data.qty);
                     $('#productName').text(data.name);
+                   if(data.qty < 1)
+                   {
+                    $('#product_id').val("").trigger('change');
+
+                    swal({
+                            title: 'Oops...',
+                            text: "Out of stock",
+                            type: 'error',
+                            timer: '1500'
+                        })
+                   }
+
+
                 }
+            });
+        }
+
+        function refund(id) {
+            swal({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: true,
+                cancelButtonColor: '#d33',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, Refund !'
+            }).then(function () {
+                $.ajax({
+                    url : "{{ url('refund') }}" + '/' + id,
+                    type : "GET",
+                    success : function(data) {
+                        table.ajax.reload();
+                        swal({
+                            title: 'Success!',
+                            text: data.message,
+                            type: 'success',
+                            timer: '1500'
+                        })
+                    },
+                    error : function () {
+                        swal({
+                            title: 'Oops...',
+                            text: data.message,
+                            type: 'error',
+                            timer: '1500'
+                        })
+                    }
+                });
             });
         }
 
@@ -245,6 +306,8 @@
                     });
                     return false;
                 }
+                $('#modal-form form')[0].reset();
+
             });
         });
 

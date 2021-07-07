@@ -8,7 +8,7 @@ class Temp_Sale extends Model
 {
     protected $table = 'temp_sales';
 
-    protected $fillable = ['po_no','product_id','price','qty','date'];
+    protected $fillable = ['po_no','product_id','price','qty','discount','subtotal','date'];
 
     protected $hidden = ['created_at','updated_at'];
 

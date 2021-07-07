@@ -5,8 +5,12 @@
 @section('top')
     <!-- DataTables -->
     <link rel="stylesheet" href="{{ asset('assets/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
-@endsection
 
+    <!-- daterange picker -->
+    <link rel="stylesheet" href="{{ asset('assets/bower_components/bootstrap-daterangepicker/daterangepicker.css') }}">
+    <!-- bootstrap datepicker -->
+    <link rel="stylesheet" href="{{ asset('assets/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}">
+@endsection
 @section('header') Sales @endsection
 @section('description') This page about your all sales @endsection
 
@@ -28,7 +32,7 @@
         </div>
 
         <div class="box-header">
-            <a onclick="addForm()" class="btn btn-primary" >Add Customers</a>
+            <a onclick="addForm()" class="btn btn-primary" >Generate Invoice</a>
             <a href="{{ route('exportPDF.salesAll1') }}" class="btn btn-danger">Export PDF</a>
             <a href="{{ route('exportExcel.salesAll1') }}" class="btn btn-success">Export Excel</a>
         </div>
@@ -42,7 +46,10 @@
                     <th>ID</th>
                     <th>PO_NO</th>
                     <th>Total Amount</th>
+                    <th>Customer Name</th>
                     <th>Date</th>
+                    <th>Refund Status</th>
+                    <th>Cashier</th>
                     <th>Actions</th>
                     
                 </tr>
@@ -61,12 +68,50 @@
 
 @section('bot')
 
-    <!-- DataTables -->
-    <script src=" {{ asset('assets/bower_components/datatables.net/js/jquery.dataTables.min.js') }} "></script>
-    <script src="{{ asset('assets/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js') }} "></script>
+<script src=" {{ asset('assets/bower_components/datatables.net/js/jquery.dataTables.min.js') }} "></script>
+<script src="{{ asset('assets/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js') }} "></script>
 
-    {{-- Validator --}}
-    <script src="{{ asset('assets/validator/validator.min.js') }}"></script>
+
+<!-- InputMask -->
+<script src="{{ asset('assets/plugins/input-mask/jquery.inputmask.js') }}"></script>
+<script src="{{ asset('assets/plugins/input-mask/jquery.inputmask.date.extensions.js') }}"></script>
+<script src="{{ asset('assets/plugins/input-mask/jquery.inputmask.extensions.js') }}"></script>
+<!-- date-range-picker -->
+<script src="{{ asset('assets/bower_components/moment/min/moment.min.js') }}"></script>
+<script src="{{ asset('assets/bower_components/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
+<!-- bootstrap datepicker -->
+<script src="{{ asset('assets/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
+<!-- bootstrap color picker -->
+<script src="{{ asset('assets/bower_components/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js') }}"></script>
+<!-- bootstrap time picker -->
+<script src="{{ asset('assets/plugins/timepicker/bootstrap-timepicker.min.js') }}"></script>
+{{-- Validator --}}
+<script src="{{ asset('assets/validator/validator.min.js') }}"></script>
+
+
+    <script>
+        $(function () {
+
+            //Date picker
+            $('#date').datepicker({
+                autoclose: true,
+                 format: 'dd-mm-yy',
+                 
+            })
+            $('#date').datepicker('setDate', new Date());
+
+
+            //Colorpicker
+            $('.my-colorpicker1').colorpicker()
+            //color picker with addon
+            $('.my-colorpicker2').colorpicker()
+
+            //Timepicker
+            $('.timepicker').timepicker({
+                showInputs: false
+            })
+        })
+    </script>
 
     <script type="text/javascript">
         var table = $('#sales-table').DataTable({
@@ -77,7 +122,10 @@
                 {data: 'id', name: 'id'},
                 {data: 'po_no', name: 'po_no'},
                 {data: 'total_amount', name: 'total_amount'},
+                {data: 'customer_name', name: 'customer_name'},
                 {data: 'date', name: 'date'},
+                {data: 'refund_status', name: 'refund_status'},
+                {data: 'cashier', name: 'cashier'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ]
         });
@@ -88,6 +136,40 @@
             $('#modal-form').modal('show');
             $('#modal-form form')[0].reset();
             $('.modal-title').text('Add Sales');
+        }
+
+        function refund(id) {
+            swal({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: true,
+                cancelButtonColor: '#d33',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, Refund !'
+            }).then(function () {
+                $.ajax({
+                    url : "{{ url('salerefund') }}" + '/' + id,
+                    type : "GET",
+                    success : function(data) {
+                        table.ajax.reload();
+                        swal({
+                            title: 'Success!',
+                            text: data.message,
+                            type: 'success',
+                            timer: '1500'
+                        })
+                    },
+                    error : function () {
+                        swal({
+                            title: 'Oops...',
+                            text: data.message,
+                            type: 'error',
+                            timer: '1500'
+                        })
+                    }
+                });
+            });
         }
 
         function generateInvoice(id) {
@@ -132,8 +214,8 @@
                     $('.modal-title').text('Edit Sales');
 
                     $('#id').val(data.id);
-                    $('#po_no').val(data.po_no);
-                    $('#total_amount').val(data.total_amount);
+                    $('#customer_id').val(data.customer_id);
+                     $('#total_amount').val(data.total_amount);
                     $('#date').val(data.date);
                 },
                 error : function() {

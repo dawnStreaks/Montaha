@@ -7,6 +7,7 @@ use App\Exports\ExportProductIn;
 use App\Product;
 use App\Product_In;
 use App\User;
+use Auth;
 use PDF;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -57,12 +58,12 @@ class ProductInController extends Controller
     {
         $this->validate($request, [
             'product_id'     => 'required',
-            'user_id'    => 'required',
+            // 'user_id'    => 'required',
             'qty'            => 'required',
             'date'        => 'required'
         ]);
 
-        Product_In::create($request->all());
+        Product_In::create(array_merge($request->all(),['user_name' => Auth::user()->name]));
 
         $product = Product::findOrFail($request->product_id);
         $product->qty += $request->qty;
@@ -109,7 +110,7 @@ class ProductInController extends Controller
     {
         $this->validate($request, [
             'product_id'     => 'required',
-            'user_id'    => 'required',
+            // 'user_id'    => 'required',
             'qty'            => 'required',
             'date'        => 'required'
         ]);
@@ -153,7 +154,7 @@ class ProductInController extends Controller
                 return $product->product->name;
             })
             ->addColumn('user_name', function ($product){
-                return $product->user->name;
+                return $product->user_name;
             })
             ->addColumn('multiple_export', function ($product){
                 return '<input type="checkbox" name="exportpdf[]" class="checkbox" value="'. $product->id .'">';

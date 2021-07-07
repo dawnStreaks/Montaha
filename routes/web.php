@@ -42,6 +42,8 @@ Route::group(['middleware' => 'auth'], function () {
      Route::get('/exportSalesAll1','SaleController1@exportSalesAll')->name('exportPDF.salesAll1');
     Route::get('/exportSalesAllExcel1','SaleController1@exportExcel')->name('exportExcel.salesAll1');
     Route::get('/generateInvoice/{id}','SaleController1@generateInvoice')->name('generateInvoice');
+    Route::get('/salerefund/{id}','SaleController1@refund')->name('refund');
+
 
 
 
@@ -73,6 +75,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/exportProductOutAllExcel','ProductOutController@exportExcel')->name('exportExcel.productOutAll');
     Route::get('/exportProductOut','ProductOutController@exportProductOut')->name('exportPDF.productOut');
     Route::get('/checkAvailable/{id}','ProductOutController@checkAvailable')->name('checkAvailable');
+    Route::get('/refund/{id}','ProductOutController@refund')->name('refund');
+
 
     Route::resource('productsIn','ProductInController');
     Route::get('/apiProductsIn','ProductInController@apiProductsIn')->name('api.productsIn');
@@ -83,5 +87,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/apiUsers','UserController@apiUsers')->name('api.users');
 
     Route::resource('company','CompanyController');
+
+    Route::resource('orders','OrderController');
+    Route::get('/apiOrders','OrderController@apiOrders')->name('api.orders');
+    Route::get('/exportOrderAll','OrderController@exportProductOutAll')->name('exportPDF.orderAll');
+    Route::get('/exportOrderAllExcel','OrderController@exportExcel')->name('exportExcel.orderAll');
+    Route::get('/exportOrder','OrderController@exportProductOut')->name('exportPDF.order');
+    // Route::get('/checkAvailable/{id}','OrderController@checkAvailable')->name('checkAvailable');
+
 });
 

@@ -39,6 +39,7 @@
             {{-- <li class=""><a href="{{ route('customers.index') }}"><i class="fa fa-user"></i> <span>Customer</span></a></li> --}}
             <li class=""><a href="{{ route('sales.index') }}"><i class="fa fa-users"></i> <span>Sales</span></a></li>
             <li class=""><a href="{{ route('sales1.index') }}"><i class="fa fa-users"></i> <span>Invoice</span></a></li>
+            <li class=""><a href="{{ route('orders.index') }}"><i class="fa fa-building-o"></i> <span>Order</span></a></li>
             {{-- <li class=""><a href="{{ route('suppliers.index') }}"><i class="fa fa-building-o"></i> <span>Supplier</span></a></li> --}}
             @if (Auth::user()->role == "admin" )
                 <li class=""><a href="{{ route('company.index') }}"><i class="fa fa-building"></i> <span>Company Details</span></a></li>

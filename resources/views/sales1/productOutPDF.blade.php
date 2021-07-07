@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Invoice</title>
     <style>
-        .invoice-box {
+        /* .invoice-box {
             max-width: 800px;
             margin: auto;
             padding: 30px;
@@ -14,7 +14,7 @@
             line-height: 24px;
             font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
             color: #555;
-        }
+        } */
         
         .invoice-box table {
             width: 100%;
@@ -23,7 +23,7 @@
         }
         
         .invoice-box table td {
-            padding: 5px;
+            /* padding: 5px; */
             vertical-align: top;
         }
         
@@ -69,10 +69,10 @@
         }
         @media print {
         html, body {
-         /* max-width: 80mm; */
-         /* height:100%; */
-         transform: scale(0.5);
-         position:absolute;
+         max-width: 80mm;
+         max-height:50%;
+         /* margin-left:-10%; */
+         /* position:absolute; */
         }
      }
         @media only screen and (max-width: 600px) {
@@ -108,14 +108,12 @@
 <div class="invoice-box">
     <table cellpadding="0" cellspacing="0">
              <tr class="top">
-                <td colspan="5">
+                <td colspan="6">
                     <table>
                         <tr>
                             <td><span>
                                 <img src="{{ asset('upload/logo/'.$companyInfo->logo) }}" style="width:10%; height:10%;">
-                            {{-- </td>
-                            <td> --}}
-                                
+                                                           
                                 <h3>{{ $companyInfo->name }}</h3><br>
                             </span>
                           
@@ -137,9 +135,9 @@
                     <table>
                         <tr>
                             
-                            <td>  Purchase Order #: </td><td>{{$Product_Out[0]->po_no}}</td>
-                            <td>Created: </td><td>{{$Product_Out[0]->date}}</td>
-                            <td> Date: </td><td>{{date("Y-m-d",time())}}</td>
+                            <td> Order #: </td><td>{{$Product_Out[0]->po_no}}</td>
+                            <td>Dated: </td><td>{{$Product_Out[0]->date}}</td>
+                            <!-- <td> Date: </td><td>{{date("Y-m-d",time())}}</td> -->
                             
                             
                             
@@ -156,11 +154,10 @@
 
        
             <tr class="heading">
-                <td>Name</td>
-                <td>Barcode</td>
-                <td>Price</td>
-                <td>Quantity</td>
-                <td>Total</td>
+                <td colspan="2">Name</td>
+                <td colspan="2">Price</td>
+                <!-- <td></td> -->
+                <td colspan="2">Subtotal</td>
             </tr>
 
             @php 
@@ -183,27 +180,27 @@
             }
             @endphp
             <tr class="item {{$tr}}">
-                <td>{{ $productData->product_name }}</td>
-                <td>{{ $productData->barcode_name }}</td>
-                <td>{{ $productData->price }}</td>
-                <td>{{ $productData->qty }}</td>
-                <td>{{ number_format($productData->price * $productData->qty) }}</td>
+                <td colspan="2">{{ $productData->product_name }} &nbsp;&nbsp; </td>
+                <td colspan="2">{{ $productData->price }} x {{ $productData->qty }} &nbsp;&nbsp;</td>
+                <!-- <td></td> -->
+                <td colspan="2">{{ number_format($productData->price * $productData->qty) }}</td>
             </tr>
             @php 
             $allTotal += $productData->price * $productData->qty; 
             @endphp
             @endforeach
-        
-            <tr class="total">
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>
-                    No. of Items: {{number_format($total)}}
+            <br>
+            <br>
+            <br>
 
+            <tr class="total">
+                <!-- <td></td>
+                <td></td> -->
+                <td colspan="2">
+                    Total Items: {{number_format($total)}}
                 </td>
-                <td>
-                   Total: {{number_format($allTotal)}}
+                <td colspan="2">
+                   Total : {{number_format($allTotal)}} KWD
                 </td>
             </tr>
         </table>

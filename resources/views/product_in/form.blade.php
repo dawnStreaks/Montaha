@@ -22,15 +22,15 @@
                             <span class="help-block with-errors"></span>
                         </div>
 
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label>User</label><br>
-                            {!! Form::select('user_id', $users, null, ['class' => 'form-control select2', 'placeholder' => '-- Choose User --', 'id' => 'user_id', 'required']) !!}
+                            {!! Form::select('user_id', $users , null, ['class' => 'form-control select2', 'placeholder' => '-- Choose User --', 'id' => 'user_id', 'required']) !!}
                             <span class="help-block with-errors"></span>
-                        </div>
+                        </div> --}}
 
                         <div class="form-group">
                             <label>Quantity</label>
-                            <input type="text" class="form-control" id="qty" name="qty" required>
+                            <input type="text" class="form-control" id="qty" name="qty"  value="1" required>
                             <span class="help-block with-errors"></span>
                         </div>
 

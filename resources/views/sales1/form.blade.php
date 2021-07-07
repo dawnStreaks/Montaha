@@ -17,8 +17,8 @@
 
                     <div class="box-body">
                         <div class="form-group">
-                            <label>PO No</label>
-                            <input type="text" class="form-control" id="po_no" name="po_no"  autofocus required>
+                            <label>Customer</label>
+                            {!! Form::select('customer_id', $customers, null, ['class' => 'form-control select2', 'placeholder' => '-- Choose Customer --', 'id' => 'customer_id', 'required']) !!}
                             <span class="help-block with-errors"></span>
                         </div>
 
@@ -30,10 +30,9 @@
 
                         <div class="form-group">
                             <label>Date</label>
-                            <input type="date" class="form-control" id="date" name="date"   required>
+                            <input data-date-format='yyyy-mm-dd' type="text" class="form-control" id="date" name="date"   required>
                             <span class="help-block with-errors"></span>
                         </div>
-
                     </div>
                     <!-- /.box-body -->
 

@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title') Product Out @endsection
+@section('title') Orders @endsection
 
 @section('top')
     <!-- DataTables -->
@@ -12,10 +12,8 @@
     <link rel="stylesheet" href="{{ asset('assets/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}">
 @endsection
 
-@section('header')
-{{-- <img src="{{ asset('upload/logo/logo.jpeg') }}" alt="logo" style="width:100%; width:50px;/> --}}
-  <h1>Montaha Couture</h1> @endsection
-@section('description') Sales & Invoice @endsection
+@section('header') Orders @endsection
+@section('description') This page about your all Orders @endsection
 
 @section('top')
 @endsection
@@ -23,7 +21,7 @@
 @section('breadcrumb')
 <ol class="breadcrumb">
     <li><a href="{{url('/')}}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-    <li class="active"> Sales</li>
+    <li class="active"> Orders</li>
 </ol>
 @endsection
 
@@ -31,42 +29,35 @@
     <div class="box">
 
         <div class="box-header">
-            <h3 class="box-title">Sales</h3>
-            <div  id="barcode-modal-form" >
-                <form  id="form-item1" method="post" class="form-horizontal" data-toggle="validator" enctype="multipart/form-data" >
-                    {{ csrf_field() }} {{ method_field('POST') }}
-    
-                  <div class="form-group">
-                    <input id="barcode_name" name="barcode_name" onmouseover="this.focus();" type="text" style="padding-left:10px;">
-                  </div>
-                {{-- <button type="submit" class="btn btn-primary">Submit</button> --}}
-                </form>
-
-            </div>
+            <h3 class="box-title">Data Orders</h3>
         </div>
 
         <div class="box-header">
-            <a onclick="addForm()" class="btn btn-primary" >Add Products Out</a>
-            <a href="{{ route('exportPDF.productOutAll1') }}" class="btn btn-danger">Export Data PDF</a>
-            <a href="{{ route('exportExcel.productOutAll1') }}" class="btn btn-success">Export Data Excel</a>
-             <button id="order_completed" class="btn btn-primary"> Order Completed</button>
-
-            {{-- <button id="downloadPDF" class="btn btn-primary">Export Invoice PDF</button> --}}
+            <a onclick="addForm()" class="btn btn-primary" >Make Orders</a>
+            <a href="{{ route('exportPDF.orderAll') }}" class="btn btn-danger">Export Data PDF</a>
+            <a href="{{ route('exportExcel.orderAll') }}" class="btn btn-success">Export Data Excel</a>
+            <button id="downloadPDF" class="btn btn-primary">Export Invoice PDF</button>
         </div>
 
         <!-- /.box-header -->
         <div class="box-body">
-            <table id="products-out-table" class="table table-striped">
+            <table id="orders-table" class="table table-striped">
                 <thead>
                 <tr>
+                    <th>Multiple Export Invoice</th>
                     <th>ID</th>
                     <th>Products</th>
                     <th>Price</th>
-                    <th>Quantity</th>
+                    <th>Qty</th>
                     <th>Discount</th>
                     <th>Subtotal</th>
                     <th>Date</th>
+                    <th>PO_No</th>
+                    <th>Customer Name</th>
+                    <th>Order Status</th>
+                    <th> Cashier </th>
                     <th></th>
+
                 </tr>
                 </thead>
                 <tbody></tbody>
@@ -74,9 +65,7 @@
         </div>
         <!-- /.box-body -->
     </div>
-    @include('sales.form')
-    {{-- @include('sales.barcodescanForm') --}}
-
+    @include('orders.form')
 
 @endsection
 
@@ -114,7 +103,6 @@
             })
             $('#date').datepicker('setDate', new Date());
 
-
             //Colorpicker
             $('.my-colorpicker1').colorpicker()
             //color picker with addon
@@ -128,12 +116,12 @@
     </script>
 
     <script type="text/javascript">
-        var table = $('#products-out-table').DataTable({
+        var table = $('#orders-table').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('api.productsOut1') }}",
+            ajax: "{{ route('api.orders') }}",
             columns: [
-              //  {data: 'multiple_export', name: 'multiple_export'},
+                {data: 'multiple_export', name: 'multiple_export'},
                 {data: 'id', name: 'id'},
                 {data: 'products_name', name: 'products_name'},
                 {data: 'price', name: 'price'},
@@ -141,6 +129,10 @@
                 {data: 'discount', name: 'discount'},
                 {data: 'subtotal', name: 'subtotal'},
                 {data: 'date', name: 'date'},
+                {data: 'po_no', name: 'po_no'},
+                {data: 'customer_name', name: 'customer_name'},
+                {data: 'order_status', name: 'order_status'},
+                {data: 'cashier', name: 'cashier'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ]
         });
@@ -148,67 +140,35 @@
         function addForm() {
             save_method = "add";
             $('input[name=_method]').val('POST');
-            // $('#barcode-modal-form').modal('show');
-            // $('#barcode-modal-form form')[0].reset();
+            $('#modal-form').modal('show');
+            $('#modal-form form')[0].reset();
             $('.modal-title').text('Add Products');
         }
 
         $(document).on("change","#product_id",function(){
             checkAvailable(this.value);
         });
-        // $(document).on("change","#barcode_name",function(){
-        //     $('#form-item1').submit();
-        // });
-
-        $(document).on("click","#order_completed",function(){
-            $('#barcode_name').val("");
-
-
-         
-            $.ajax({
-                url: "{{ url('order_complete') }}" ,
-                type: "GET",
-                dataType: "JSON",
-                success: function(response) {
-            w = window.open(window.location.href,"_blank");
-            w.document.open();
-            w.document.write(response.data);
-            w.document.close();
-            w.window.print();
-
-        
-                    
-                    
-                    $('#products-out-table').DataTable().ajax.reload();
-
-
-                },
-                error : function() {
-                    alert("Nothing Data");
-                }
-            });
-        });
 
         function editForm(id) {
             save_method = 'edit';
-            // alert(id);
             $('input[name=_method]').val('PATCH');
-             $('#modal-form').modal('show');
+            $('#modal-form form')[0].reset();
 
             $.ajax({
-                url: "{{ url('sales') }}" + '/' + id + "/edit",
+                url: "{{ url('orders') }}" + '/' + id + "/edit",
                 type: "GET",
                 dataType: "JSON",
                 success: function(data) {
                     $('#modal-form').modal('show');
-                    $('.modal-title').text('Edit Products');
-
+                    $('.modal-title').text('Edit Orders');
                     $('#id').val(data.id);
                     $('#product_id').val(data.product_id).trigger('change');
-                    // $('#customer_id').val(data.customer_id).trigger('change');
+                    $('#customer_name').val(data.customer_name).trigger('change');
                     $('#qty').val(data.qty);
+                    $('#order_status').val(data.order_status);
+                    $('#discount').val(data.discount);
                     $('#price').val(data.price);
-                    $('#date').val(data.date);
+
                 },
                 error : function() {
                     alert("Nothing Data");
@@ -229,6 +189,40 @@
             });
         }
 
+        function refund(id) {
+            swal({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: true,
+                cancelButtonColor: '#d33',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, Refund !'
+            }).then(function () {
+                $.ajax({
+                    url : "{{ url('refund') }}" + '/' + id,
+                    type : "GET",
+                    success : function(data) {
+                        table.ajax.reload();
+                        swal({
+                            title: 'Success!',
+                            text: data.message,
+                            type: 'success',
+                            timer: '1500'
+                        })
+                    },
+                    error : function () {
+                        swal({
+                            title: 'Oops...',
+                            text: data.message,
+                            type: 'error',
+                            timer: '1500'
+                        })
+                    }
+                });
+            });
+        }
+
         function deleteData(id){
             var csrf_token = $('meta[name="csrf-token"]').attr('content');
             swal({
@@ -241,7 +235,7 @@
                 confirmButtonText: 'Yes, delete it!'
             }).then(function () {
                 $.ajax({
-                    url : "{{ url('sales') }}" + '/' + id,
+                    url : "{{ url('orders') }}" + '/' + id,
                     type : "POST",
                     data : {'_method' : 'DELETE', '_token' : csrf_token},
                     success : function(data) {
@@ -269,9 +263,8 @@
             $('#modal-form form').validator().on('submit', function (e) {
                 if (!e.isDefaultPrevented()){
                     var id = $('#id').val();
-                    // if (save_method == 'add') url = "{{ url('sales') }}";
-                    // else
-                     url = "{{ url('sales') . '/' }}" + id;
+                    if (save_method == 'add') url = "{{ url('orders') }}";
+                    else url = "{{ url('orders') . '/' }}" + id;
 
                     $.ajax({
                         url : url,
@@ -303,47 +296,6 @@
             });
         });
 
-        $(function(){
-            $('#barcode-modal-form form').validator().on('submit', function (e) {
-                if (!e.isDefaultPrevented()){
-                    save_method = "add";
-
-                    var id = $('#id').val();
-                    // if (save_method == 'add')
-                     url = "{{ url('sales') }}";
-                     var textboxvalue = $('#barcode_name').val();
-                    $.ajax({
-                        url : url,
-                        type : "POST",
-                        data: new FormData($("#barcode-modal-form form")[0]),
-                        contentType: false,
-                        processData: false,
-                        success : function(data) {
-                            // $('#barcode-modal-form').modal('hide');
-                            table.ajax.reload();
-                            swal({
-                                title: 'Success!',
-                                text: data.message,
-                                type: 'success',
-                                timer: '1500'
-                            })
-                        },
-                        error : function(data){
-                            swal({
-                                title: 'Oops...',
-                                text: data.message,
-                                type: 'error',
-                                timer: '1500'
-                            })
-                        }
-                    });
-                    return false;
-                }
-            });
-        });
-
-
-
         // Disable button for first time
         $('#downloadPDF').prop('disabled', true);
 
@@ -366,7 +318,7 @@
                     val[i] = $(this).val();
                 });
 
-                var exportUrl = "{{ route('exportPDF.productOut') }}";
+                var exportUrl = "{{ route('exportPDF.order') }}";
                 var blkstr = val.join(', ');
                 console.log(blkstr);
                 $.ajax({
@@ -421,15 +373,5 @@
             });
         });
     </script>
-   <style>
-    @media print {
-        html, body {
-         width: 80mm;
-         height:100%;
-         position:absolute;
-        }
-     }
-     
-     </style>
 
 @endsection

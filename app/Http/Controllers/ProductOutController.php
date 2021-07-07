@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use PDF;
 use Illuminate\Support\Facades\Response as FacadeResponse;
+use Auth;
+use App\User;
+use App\Refund;
 
 class ProductOutController extends Controller
 {
@@ -30,9 +33,11 @@ class ProductOutController extends Controller
             ->get()
             ->pluck('name','id');
 
+
         $customers = Customer::orderBy('name','ASC')
             ->get()
             ->pluck('name','id');
+
 
         $invoice_data = Product_Out::all();
         return view('product_out.index', compact('products','customers', 'invoice_data'));
@@ -63,8 +68,10 @@ class ProductOutController extends Controller
            'date'           => 'required'
         ]);
         $price = \DB::table('products')->select('price')->where('id', $request['product_id'] )->get();
-
-        Product_Out::create(array_merge($request->all(), ['po_no' => rand(), 'price' => $price[0]->price ]));
+        $subtotal = $price[0]->price * $request->qty ;
+        if($request->discount > 0)
+        $subtotal = $subtotal - ($subtotal* ($request->discount/100));
+        Product_Out::create(array_merge($request->all(), ['po_no' => rand(1, 99999), 'price' => $price[0]->price, 'refund_status' => 0, 'subtotal' => $subtotal, 'cashier' => Auth::user()->name]));
         $product = Product::findOrFail($request->product_id);
         $product->qty -= $request->qty;
         $product->save();
@@ -112,11 +119,17 @@ class ProductOutController extends Controller
             'product_id'     => 'required',
             'customer_id'    => 'required',
             'qty'            => 'required',
-            'date'           => 'required'
+            'date'           => 'required',
+            
         ]);
 
         $Product_Out = Product_Out::findOrFail($id);
-        $Product_Out->update($request->all());
+        $subtotal = $Product_Out->price * $request->qty ;
+
+          if($request->discount > 0)
+            $subtotal = $subtotal - ($subtotal* ($request->discount/100));
+        
+        $Product_Out->update(array_merge($request->all(), ['subtotal' => $subtotal, 'cashier' => Auth::user()->name]));
 
         $product = Product::findOrFail($request->product_id);
         $product->qty -= $request->qty;
@@ -127,6 +140,35 @@ class ProductOutController extends Controller
             'message'    => 'Product Out Updated'
         ]);
     }
+
+    public function refund($id)
+    {
+        
+
+        $Product_Out = Product_Out::findOrFail($id);
+         $refund_status = "Refund of ". $Product_Out->subtotal . "KWD  "   ." Qty x Price " . $Product_Out->qty. " x ". $Product_Out->price . " on ". date("Y/m/d"). "by ". $Product_Out->cashier;
+        // Refund::create(['product_out_id' => $id, 'po_no' => $Product_Out->po_no, 'refund_date' =>  date("Y/m/d"), 'refund_amount' => $Product_Out->price,  'cashier' => Auth::user()->name]);
+        $Product_Out->price = 0;
+        $Product_Out->qty = 0;
+        $subtotal = $Product_Out->price * $Product_Out->qty ; //in case refund amount is included, 
+
+          if($Product_Out->discount > 0)
+            $subtotal = $subtotal - ($subtotal* ($Product_Out->discount/100));
+        
+        $Product_Out->update(['subtotal' => $subtotal, 'cashier' => Auth::user()->name, 'refund_status' => $refund_status]);
+
+        $product = Product::findOrFail($Product_Out->product_id);
+        $product->qty += $Product_Out->qty;
+        $product->update();
+
+
+        return response()->json([
+            'success'    => true,
+            'message'    => 'Refund Succesfull'
+        ]);
+    }
+
+
 
     /**
      * Remove the specified resource from storage.
@@ -148,7 +190,8 @@ class ProductOutController extends Controller
 
     public function apiProductsOut(){
         $product = Product_Out::all();
-
+        // $refund = Refund::all();
+// dd($product);
         return Datatables::of($product)
             ->addColumn('products_name', function ($product){
                 return $product->product->name;
@@ -159,14 +202,48 @@ class ProductOutController extends Controller
             ->addColumn('po_no', function ($product){
                 return $product->po_no;
             })
+
+            ->addColumn('refund_status', function ($product){
+                if($product->refund_status == "0")
+                    return "No";
+                 else
+                 return $product->refund_status;
+
+                //     return "Refund of ". $product->subtotal . "KWD  "  . $product->product->name ." - " . $product->qty. " by ". $product->customer->name . " on ". date("Y/m/d");
+            })
+            ->addColumn('discount', function ($product){
+
+                if($product->discount == NULL || $product->discount == 0)
+                return 0;
+                else
+                return $product->discount . "%";
+            })
+            ->addColumn('customer_name', function ($product){
+                return $product->customer->name;
+            })
+            ->addColumn('cashier', function ($product){
+                return Auth::user()->name;
+            })
+
             ->addColumn('multiple_export', function ($product){
                 return '<input type="checkbox" name="exportpdf[]" class="checkbox" value="'. $product->id .'">';
             })
             ->addColumn('action', function($product){
+                if($product->refund_status == 0)
+                {
                 return '<a onclick="editForm('. $product->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a> ' .
+                    '<a onclick="deleteData('. $product->id .')" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-trash"></i> Delete</a>'.
+                    '<a onclick="refund('. $product->id .')" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-repeat"></i> Refund</a>';
+                }
+                else
+                 {
+                    return '<a onclick="editForm('. $product->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a> ' .
                     '<a onclick="deleteData('. $product->id .')" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-trash"></i> Delete</a>';
+                 }
+
+
             })
-            ->rawColumns(['multiple_export','products_name','price','action','po_no'])->make(true);
+            ->rawColumns(['multiple_export','products_name','price', 'po_no', 'refund_status', 'discount','customer_name','cashier', 'action'])->make(true);
 
     }
 

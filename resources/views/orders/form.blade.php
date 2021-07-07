@@ -23,8 +23,21 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Customer</label>
-                            {!! Form::select('customer_id', $customers, null, ['class' => 'form-control select2', 'placeholder' => '-- Choose Customer --', 'id' => 'customer_id', 'required']) !!}
+                            <label>Customer Name</label>
+                            <input type="text" class="form-control" id="customer_name" name="customer_name" required>
+                            <span class="help-block with-errors"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Price</label>
+                            <input type="text" class="form-control" id="price" name="price" required>
+                            <span class="help-block with-errors"></span>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label>Order Status</label>
+                            {!! Form::select('order_status', array(0 => 'Payment Received', 1 => 'Payment Pending', 2 => 'Order Delivered'), 0, ['class' => 'form-control select2', 'placeholder' => '-- Choose Order Status --', 'id' => 'order_status', 'required']) !!}
                             <span class="help-block with-errors"></span>
                         </div>
 

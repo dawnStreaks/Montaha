@@ -113,7 +113,7 @@
                             <td></td>
                             
                             <td>
-                                Purchase Order #: {{rand(1000,10000)}}<br>
+                                Purchase Order #: {{rand(1, 99999)}}<br>
                                 Created: {{date("Y-m-d",time())}}<br>
                                 Due: February 1, 2015
                             </td>
