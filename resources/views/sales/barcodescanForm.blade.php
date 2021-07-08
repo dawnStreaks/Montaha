@@ -15,11 +15,11 @@
                     <input type="hidden" id="id" name="id">
 
 
-                    <div class="box-body">
+                    <div class="box-body" style ="margin-left: 20px;">
               
                    
 
-                        <div class="form-group">
+                        <div class="form-group" >
                         <input name="barcode_name" onmouseover="this.focus();" type="text">
                         </div>
                        

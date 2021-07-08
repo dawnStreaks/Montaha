@@ -243,7 +243,7 @@ class OrderController extends Controller
             })
             ->addColumn('action', function($order){
                 return '<a onclick="editForm('. $order->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a> ' .
-                    '<a onclick="deleteData('. $order->id .')" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-trash"></i> Delete</a>';
+                    '<a onclick="deleteData('. $order->id .')" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-trash"></i> Delete</a> '.
                     '<a onclick="refund('. $order->id .')" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-repeat"></i> Refund</a>';
 
 

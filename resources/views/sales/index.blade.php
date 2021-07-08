@@ -32,7 +32,7 @@
 
         <div class="box-header">
             <h3 class="box-title">Sales</h3>
-            <div  id="barcode-modal-form" >
+            <div  id="barcode-modal-form" style ="margin-left: 20px;" >
                 <form  id="form-item1" method="post" class="form-horizontal" data-toggle="validator" enctype="multipart/form-data" >
                     {{ csrf_field() }} {{ method_field('POST') }}
     
