@@ -271,7 +271,7 @@ class ProductOutController extends Controller
         // dd($Product_Out);
 
         $companyInfo = Company::find(1);
-$view = view('product_out.productOutPDF', compact('Product_Out', 'companyInfo'))->render();
+       $view = view('product_out.productOutPDF', compact('Product_Out', 'companyInfo'))->render();
 //  dd($Product_Out);
 // 
 // return view('sales.productOutPDF', compact('Product_Out', 'companyInfo'))->render();    

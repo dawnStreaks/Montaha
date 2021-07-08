@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Invoice</title>
     <style>
-        .invoice-box {
+        /* .invoice-box {
             max-width: 800px;
             margin: auto;
             padding: 30px;
@@ -14,7 +14,7 @@
             line-height: 24px;
             font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
             color: #555;
-        }
+        } */
         
         .invoice-box table {
             width: 100%;
@@ -23,7 +23,7 @@
         }
         
         .invoice-box table td {
-            padding: 5px;
+            /* padding: 5px; */
             vertical-align: top;
         }
         
@@ -67,7 +67,14 @@
             border-top: 2px solid #eee;
             font-weight: bold;
         }
-        
+        @media print {
+        html, body {
+         max-width: 80mm;
+         max-height:50%;
+         /* margin-left:-10%; */
+         /* position:absolute; */
+        }
+     }
         @media only screen and (max-width: 600px) {
             .invoice-box table tr.top table td {
                 width: 100%;
@@ -100,59 +107,57 @@
 <body>
 <div class="invoice-box">
     <table cellpadding="0" cellspacing="0">
-            <tr class="top">
-                <td colspan="5">
+             <tr class="top">
+                <td colspan="6">
                     <table>
                         <tr>
-                            <td class="title">
-                                <img src="{{ asset('upload/logo/'.$companyInfo->logo) }}" style="width:100%; width:200px;">
+                            <td><span>
+                                <img src="{{ asset('upload/logo/'.$companyInfo->logo) }}" style="width:10%; height:10%;">
+                                                           
+                                <h3>{{ $companyInfo->name }}</h3><br>
+                            </span>
+                          
+                                {{ $companyInfo->address }}
+                                                           
+                            {{ $companyInfo->email }}
                             </td>
-
-                            <td></td>
                             <td></td>
                             <td></td>
                             
-                            <td>
-                                Purchase Order #: {{rand(1, 99999)}}<br>
-                                Created: {{date("Y-m-d",time())}}<br>
-                                {{-- Due: February 1, 2015 --}}
-                            </td>
+                          
                         </tr>
                     </table>
                 </td>
             </tr>
-            
+             
             <tr class="information">
                 <td colspan="5">
                     <table>
                         <tr>
-                            <td>
-                                {{ $companyInfo->name }}<br>
-                                {{ $companyInfo->address }}<br>
-                                {{ $companyInfo->email }}
-                            </td>
-
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            
+                            <td> Order #: </td><td>{{$Product_Out[0]->po_no}}</td>
+                            <td>Dated: </td><td>{{$Product_Out[0]->date}}</td>
+                            <!-- <td> Date: </td><td>{{date("Y-m-d",time())}}</td> -->
+                            
+                            
+                            
                             
                             <td>
-                                {{$Product_Out[0]->customer_name}}<br>
-                                {{$Product_Out[0]->address}}<br>
-                                {{$Product_Out[0]->email}}
-                            </td>
+                                {{-- {{$Product_Out[0]->customer->name}}<br>
+                                {{$Product_Out[0]->customer->address}}<br>
+                                {{$Product_Out[0]->customer->email}} 
+                            </td>--}}
                         </tr>
                     </table>
                 </td>
-            </tr>
+            </tr> 
 
        
             <tr class="heading">
-                <td>Name</td>
-                <td>Barcode</td>
-                <td>Price</td>
-                <td>Quantity</td>
-                <td>Total</td>
+                <td colspan="2">Name</td>
+                <td colspan="2">Price</td>
+                <!-- <td></td> -->
+                <td colspan="2">Subtotal</td>
             </tr>
 
             @php 
@@ -162,36 +167,40 @@
             @endphp
 
             @foreach($Product_Out as $productData)
+            
+
             @php 
             $i++;
-            
+            // dd($productData);
             if($i == $total){
                 $tr = '';
-            }else{
+            }
+            else {
                 $tr = 'last';
             }
             @endphp
-
             <tr class="item {{$tr}}">
-                <td>{{ $productData->product_name }}</td>
-                <td>{{ $productData->barcode_name }}</td>
-                <td>{{ $productData->subtotal }}</td>
-                <td>{{ $productData->qty }}</td>
-                <td>{{ number_format($productData->subtotal * $productData->qty) }}</td>
+                <td colspan="2">{{ $productData->product_name }} &nbsp;&nbsp; </td>
+                <td colspan="2">{{ $productData->subtotal }} x {{ $productData->qty }} &nbsp;&nbsp;</td>
+                <!-- <td></td> -->
+                <td colspan="2">{{ number_format($productData->subtotal * $productData->qty) }}</td>
             </tr>
-
             @php 
             $allTotal += $productData->subtotal * $productData->qty; 
             @endphp
             @endforeach
-        
+            <br>
+            <br>
+            <br>
+
             <tr class="total">
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>
-                   Total: {{number_format($allTotal)}}
+                <!-- <td></td>
+                <td></td> -->
+                <td colspan="2">
+                    Total Items: {{number_format($total)}}
+                </td>
+                <td colspan="2">
+                   Total : {{number_format($allTotal)}} KWD
                 </td>
             </tr>
         </table>

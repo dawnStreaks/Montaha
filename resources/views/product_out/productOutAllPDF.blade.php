@@ -45,8 +45,10 @@
         <td>ID</td>
         <td>Product</td>
         <td>Price</td>
-        <td>Quantity</td>
+        <td>Discount</td>
         <td>Subtotal</td>
+        <td>Quantity</td>
+        <td>total</td>
         <td>Date</td>
     </tr>
     </thead>
@@ -56,8 +58,10 @@
             <td>{{ $p->id }}</td>
             <td>{{ $p->product->name }}</td>
             <td>{{ $p->price }}</td>
+            <td>{{ $p->discount }}</td>
+            <td>{{ $p->subtotal}}</td>
             <td>{{ $p->qty }}</td>
-            <td>{{ number_format($p->price * $p->qty) }}</td>
+            <td>{{ number_format($p->subtotal * $p->qty) }}</td>
             <td>{{ $p->date }}</td>
         </tr>
         </tbody>

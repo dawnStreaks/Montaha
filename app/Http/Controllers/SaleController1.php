@@ -249,7 +249,7 @@ class SaleController1 extends Controller
         $Product_Out = \DB::table('product_out')
             ->join('products', 'products.id', '=', 'product_out.product_id')
             ->join('barcodes', 'barcodes.id', '=', 'products.barcode_id')
-            ->select('products.name as product_name', 'barcodes.name as barcode_name', 'product_out.price', 'product_out.qty', 'product_out.po_no', 'product_out.date')
+            ->select('products.name as product_name', 'barcodes.name as barcode_name', 'product_out.price', 'product_out.subtotal', 'product_out.qty', 'product_out.po_no', 'product_out.date')
             ->where('po_no', $po_no )
             ->get();
         

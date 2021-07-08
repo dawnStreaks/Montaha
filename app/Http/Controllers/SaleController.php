@@ -315,20 +315,22 @@ class SaleController extends Controller
           
                 $test['po_no'] = $input['po_no'];
                 $test['product_id'] = $item['product_id'];
-                if($item['discount']>0)    
-                {
-                $test['price'] = $item['price'] - ( $item['price']* ( $item['discount']/100));
-                $test['discount'] = $item['discount'];    
-            }
-                else{
+                
                 $test['price'] = $item['price'];
-                $test['discount'] = 0;
-                }
+                
+                
                 $test['qty'] = $item['qty'];
                 $test['date'] = $item['date'];
                 $test['refund_status'] = 0;
-               
-                $test['subtotal'] =  $test['price'] * $item['qty']; 
+                if($item['discount']>0)    
+                {
+                $test['subtotal'] =  ($item['price'] - ( $item['price']* ( $item['discount']/100))) * $item['qty']; 
+                $test['discount'] = $item['discount'];    
+                }
+                else{
+                    $test['subtotal'] = $item['price'];
+                    $test['discount'] = 0;
+                    }
                 $test['cashier'] = Auth::user()->name;
                 $test['customer_id'] = 3;
 
@@ -354,7 +356,7 @@ class SaleController extends Controller
         $Product_Out = \DB::table('product_out')
             ->join('products', 'products.id', '=', 'product_out.product_id')
             ->join('barcodes', 'barcodes.id', '=', 'products.barcode_id')
-            ->select('products.name as product_name', 'barcodes.name as barcode_name', 'product_out.price', 'product_out.qty', 'product_out.po_no', 'product_out.date')
+            ->select('products.name as product_name', 'barcodes.name as barcode_name', 'product_out.price', 'product_out.subtotal', 'product_out.qty', 'product_out.po_no', 'product_out.date')
             ->where('po_no', $input['po_no'] )
             ->get();
         
