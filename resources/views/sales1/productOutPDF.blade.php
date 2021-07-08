@@ -137,7 +137,7 @@
                             
                             <td> Order #: </td><td>{{$Product_Out[0]->po_no}}</td>
                             <td>Dated: </td><td>{{$Product_Out[0]->date}}</td>
-                            <!-- <td> Date: </td><td>{{date("Y-m-d",time())}}</td> -->
+                            <!-- <td> Date: </td><td>\{\{date("Y-m-d",time())}}</td> -->
                             
                             
                             

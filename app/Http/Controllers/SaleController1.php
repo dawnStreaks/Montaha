@@ -150,10 +150,10 @@ class SaleController1 extends Controller
             return $sales->cashier;
         })
         ->addColumn('refund_status', function ($sales){
-            if($sales->refund_status == 0)
+            if($sales->refund_status == "0")
                 return "No";
             else
-                return "Refund of ". $sales->total_amount . "KWD  "  .  " for ". $sales->customer->name . " on ". date("Y/m/d") . "by ". Auth::user()->name;
+                return $sales->refund_status;
         })
 
             ->addColumn('action', function($sales){
@@ -212,20 +212,21 @@ class SaleController1 extends Controller
         // Refund::create(['po_no' => $Product_Out->po_no, 'price' => $Product_Out->price, 'qty' => $Product_Out->qty, 'discount' => $Product_Out->discount, 'refund_amount' => $Product_Out->price, 'subtotal' => $subtotal, 'cashier' => Auth::user()->name]));
         foreach ($Product_Out as  $product_out) {
             $refund_status = "Refund of ". $product_out->subtotal . "KWD  "   ." Qty x Price " . $product_out->qty. " x ". $product_out->price . " on ". date("Y/m/d"). "by ". $product_out->cashier;
-
             $product = Product::findOrFail($product_out->product_id);
             $product->qty += $product_out->qty;
             $product->update();
-        $product_out->price = 0;
-        $product_out->qty = 0;
+            $product_out->price = 0;
+            $product_out->qty = 0;
         // $subtotal = $product_out->price * $product_out->qty ; //in case refund amount is included, 
 
         //   if($product_out->discount > 0)
         //     $subtotal = $subtotal - ($subtotal* ($product_out->discount/100));
         
-            $product_out->update(['subtotal' => $subtotal,  'refund_status' => $refund_status]);
+            // $product_out->update(['subtotal' => $subtotal,  'refund_status' => $refund_status]);
         
-     
+            \DB::table('product_out')
+            ->where('id', $product_out->id)
+            ->update(['subtotal' => 0,  'refund_status' => $refund_status]);
        
 
         }
@@ -253,7 +254,6 @@ class SaleController1 extends Controller
             ->get();
         
         $companyInfo = Company::find(1);
-//  dd($Product_Out);
        $view = view('sales1.productOutPDF', compact('Product_Out', 'companyInfo'))->render();
 
         // return view('sales.productOutPDF', compact('Product_Out', 'companyInfo'))->render();    

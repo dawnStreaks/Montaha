@@ -1,157 +1,200 @@
-{{--<!doctype html>--}}
-{{--<html lang="en">--}}
-{{--<head>--}}
-{{--<meta charset="UTF-8">--}}
-{{--<meta name="viewport"--}}
-{{--content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">--}}
-{{--<meta http-equiv="X-UA-Compatible" content="ie=edge">--}}
-{{--<link rel="stylesheet" href="{{ asset('assets/bower_components/bootstrap/dist/css/bootstrap.min.css ')}}">--}}
-{{--<!-- Font Awesome -->--}}
-{{--<link rel="stylesheet" href="{{ asset('assets/bower_components/font-awesome/css/font-awesome.min.css')}} ">--}}
-{{--<!-- Ionicons -->--}}
-{{--<link rel="stylesheet" href="{{ asset('assets/bower_components/Ionicons/css/ionicons.min.css')}} ">--}}
-
-{{--<title>Product Masuk Exports All PDF</title>--}}
-{{--</head>--}}
-{{--<body>--}}
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Invoice</title>
     <style>
-        #product-masuk {
-            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-            border-collapse: collapse;
-            width: 100%;
+        .invoice-box {
+            max-width: 800px;
+            margin: auto;
+            padding: 30px;
+            border: 1px solid #eee;
+            box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+            font-size: 16px;
+            line-height: 24px;
+            font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+            color: #555;
         }
-    
-        #product-masuk td, #product-masuk th {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-    
-        #product-masuk tr:nth-child(even){background-color: #f2f2f2;}
-    
-        #product-masuk tr:hover {background-color: #ddd;}
-    
-        #product-masuk th {
-            padding-top: 12px;
-            padding-bottom: 12px;
-            text-align: left;
-            background-color: #4CAF50;
-            color: white;
-        }
-    </style>
-    
-    <table id="product-masuk" width="100%">
-        <thead>
-        <tr>
-            <td>ID</td>
-            <td>Product</td>
-            <td>Price</td>
-            <td>Quantity</td>
-            <td>Subtotal</td>
-            <td>Date</td>
-        </tr>
-        </thead>
-        @foreach($Product_Out as $p)
-            <tbody>
-            <tr>
-                <td>{{ $p->id }}</td>
-                <td>{{ $p->product->name }}</td>
-                <td>{{ $p->price }}</td>
-                <td>{{ $p->qty }}</td>
-                <td>{{ number_format($p->price * $p->qty) }}</td>
-                <td>{{ $p->date }}</td>
-            </tr>
-            </tbody>
-        @endforeach
-    
-    </table>
-    
-    
-    {{--<!-- jQuery 3 -->--}}
-    {{--<script src="{{  asset('assets/bower_components/jquery/dist/jquery.min.js') }} "></script>--}}
-    {{--<!-- Bootstrap 3.3.7 -->--}}
-    {{--<script src="{{  asset('assets/bower_components/bootstrap/dist/js/bootstrap.min.js') }} "></script>--}}
-    {{--<!-- AdminLTE App -->--}}
-    {{--<script src="{{  asset('assets/dist/js/adminlte.min.js') }}"></script>--}}
-    {{--</body>--}}
-    {{--</html>--}}
-    
-    
-{{--<!doctype html>--}}
-{{--<html lang="en">--}}
-{{--<head>--}}
-{{--<meta charset="UTF-8">--}}
-{{--<meta name="viewport"--}}
-{{--content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">--}}
-{{--<meta http-equiv="X-UA-Compatible" content="ie=edge">--}}
-{{--<link rel="stylesheet" href="{{ asset('assets/bower_components/bootstrap/dist/css/bootstrap.min.css ')}}">--}}
-{{--<!-- Font Awesome -->--}}
-{{--<link rel="stylesheet" href="{{ asset('assets/bower_components/font-awesome/css/font-awesome.min.css')}} ">--}}
-{{--<!-- Ionicons -->--}}
-{{--<link rel="stylesheet" href="{{ asset('assets/bower_components/Ionicons/css/ionicons.min.css')}} ">--}}
-
-{{--<title>Product Masuk Exports All PDF</title>--}}
-{{--</head>--}}
-{{--<body>--}}
-    <style>
-        #product-masuk {
-            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-            border-collapse: collapse;
-            width: 100%;
-        }
-    
-        #product-masuk td, #product-masuk th {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-    
-        #product-masuk tr:nth-child(even){background-color: #f2f2f2;}
-    
-        #product-masuk tr:hover {background-color: #ddd;}
-    
-        #product-masuk th {
-            padding-top: 12px;
-            padding-bottom: 12px;
-            text-align: left;
-            background-color: #4CAF50;
-            color: white;
-        }
-    </style>
-    
-    <table id="product-masuk" width="100%">
-        <thead>
-        <tr>
-            <td>ID</td>
-            <td>Product</td>
-            <td>Price</td>
-            <td>Quantity</td>
-            <td>Subtotal</td>
-            <td>Date</td>
-        </tr>
-        </thead>
-        @foreach($Product_Out as $p)
-            <tbody>
-            <tr>
-                <td>{{ $p->id }}</td>
-                <td>{{ $p->product->name }}</td>
-                <td>{{ $p->price }}</td>
-                <td>{{ $p->qty }}</td>
-                <td>{{ number_format($p->price * $p->qty) }}</td>
-                <td>{{ $p->date }}</td>
-            </tr>
-            </tbody>
-        @endforeach
-    
-    </table>
-    
-    
-    {{--<!-- jQuery 3 -->--}}
-    {{--<script src="{{  asset('assets/bower_components/jquery/dist/jquery.min.js') }} "></script>--}}
-    {{--<!-- Bootstrap 3.3.7 -->--}}
-    {{--<script src="{{  asset('assets/bower_components/bootstrap/dist/js/bootstrap.min.js') }} "></script>--}}
-    {{--<!-- AdminLTE App -->--}}
-    {{--<script src="{{  asset('assets/dist/js/adminlte.min.js') }}"></script>--}}
-    {{--</body>--}}
-    {{--</html>--}}
-    
-    
         
+        .invoice-box table {
+            width: 100%;
+            /*line-height: inherit;*/
+            text-align: left;
+        }
+        
+        .invoice-box table td {
+            padding: 5px;
+            vertical-align: top;
+        }
+        
+        .invoice-box table tr td:nth-child(5) {
+            text-align: right;
+        }
+        
+        .invoice-box table tr.top table td {
+            padding-bottom: 20px;
+        }
+        
+        .invoice-box table tr.top table td.title {
+            font-size: 45px;
+            line-height: 45px;
+            color: #333;
+        }
+        
+        .invoice-box table tr.information table td {
+            padding-bottom: 40px;
+        }
+        
+        .invoice-box table tr.heading td {
+            background: #eee;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+        }
+        
+        .invoice-box table tr.details td {
+            padding-bottom: 20px;
+        }
+        
+        .invoice-box table tr.item td{
+            border-bottom: 1px solid #eee;
+        }
+        
+        .invoice-box table tr.item.last td {
+            border-bottom: none;
+        }
+        
+        .invoice-box table tr.total td:nth-child(5) {
+            border-top: 2px solid #eee;
+            font-weight: bold;
+        }
+        
+        @media only screen and (max-width: 600px) {
+            .invoice-box table tr.top table td {
+                width: 100%;
+                display: block;
+                text-align: center;
+            }
+            
+            .invoice-box table tr.information table td {
+                width: 100%;
+                display: block;
+                text-align: center;
+            }
+        }
+        
+        /** RTL **/
+        .rtl {
+            direction: rtl;
+            font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+        }
+        
+        .rtl table {
+            text-align: right;
+        }
+        
+        .rtl table tr td:nth-child(5) {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<div class="invoice-box">
+    <table cellpadding="0" cellspacing="0">
+            <tr class="top">
+                <td colspan="5">
+                    <table>
+                        <tr>
+                            <td class="title">
+                                <img src="{{ asset('upload/logo/'.$companyInfo->logo) }}" style="width:100%; width:200px;">
+                            </td>
+
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            
+                            <td>
+                                Purchase Order #: {{rand(1, 99999)}}<br>
+                                Created: {{date("Y-m-d",time())}}<br>
+                                {{-- Due: February 1, 2015 --}}
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            
+            <tr class="information">
+                <td colspan="5">
+                    <table>
+                        <tr>
+                            <td>
+                                {{ $companyInfo->name }}<br>
+                                {{ $companyInfo->address }}<br>
+                                {{ $companyInfo->email }}
+                            </td>
+
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            
+                            <td>
+                                {{$Product_Out[0]->customer_name}}<br>
+                                {{-- {{$Product_Out[0]->address}}<br>
+                                {{$Product_Out[0]->email}} --}}
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+       
+            <tr class="heading">
+                <td>Name</td>
+                <td>Barcode</td>
+                <td>Price</td>
+                <td>Quantity</td>
+                <td>Total</td>
+            </tr>
+
+            @php 
+            $total = count($Product_Out); 
+            $i=1;
+            $allTotal = 0;
+            @endphp
+
+            @foreach($Product_Out as $productData)
+            @php 
+            $i++;
+            
+            if($i == $total){
+                $tr = '';
+            }else{
+                $tr = 'last';
+            }
+            @endphp
+
+            <tr class="item {{$tr}}">
+                <td>{{ $productData->product_name }}</td>
+                <td>{{ $productData->barcode_name }}</td>
+                <td>{{ $productData->subtotal }}</td>
+                <td>{{ $productData->qty }}</td>
+                <td>{{ number_format($productData->subtotal * $productData->qty) }}</td>
+            </tr>
+
+            @php 
+            $allTotal += $productData->subtotal * $productData->qty; 
+            @endphp
+            @endforeach
+        
+            <tr class="total">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                   Total: {{number_format($allTotal)}}
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

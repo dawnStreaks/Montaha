@@ -44,7 +44,7 @@
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>PO_NO</th>
+                    <th>PO No.</th>
                     <th>Total Amount</th>
                     <th>Customer Name</th>
                     <th>Date</th>
@@ -180,17 +180,12 @@
                 dataType: "JSON",
                     success: function(response) {
         // alert(response.data);
-                        var mywindow = window.open('', 'PRINT', 'height=400,width=600');
-            mywindow.document.write(response.data);
-            mywindow.document.close(); // necessary for IE >= 10
-            mywindow.focus(); // necessary for IE >= 10*/
-            mywindow.print();
-            mywindow.close();
-            return true;
-                 
-                    
+                    w = window.open(window.location.href,"_blank");
+                    w.document.open();
+                    w.document.write(response.data);
+                    w.document.close();
+                    w.window.print();
                     $('#sales-table').DataTable().ajax.reload();
-
 
                 },
             

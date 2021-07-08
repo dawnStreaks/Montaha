@@ -115,7 +115,7 @@
                             <td>
                                 Purchase Order #: {{rand(1, 99999)}}<br>
                                 Created: {{date("Y-m-d",time())}}<br>
-                                Due: February 1, 2015
+                                {{-- Due: February 1, 2015 --}}
                             </td>
                         </tr>
                     </table>
@@ -175,13 +175,13 @@
             <tr class="item {{$tr}}">
                 <td>{{ $productData->product_name }}</td>
                 <td>{{ $productData->barcode_name }}</td>
-                <td>{{ $productData->price }}</td>
+                <td>{{ $productData->subtotal }}</td>
                 <td>{{ $productData->qty }}</td>
-                <td>{{ number_format($productData->price * $productData->qty) }}</td>
+                <td>{{ number_format($productData->subtotal * $productData->qty) }}</td>
             </tr>
 
             @php 
-            $allTotal += $productData->price * $productData->qty; 
+            $allTotal += $productData->subtotal * $productData->qty; 
             @endphp
             @endforeach
         

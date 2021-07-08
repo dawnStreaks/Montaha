@@ -260,25 +260,27 @@ class ProductOutController extends Controller
         $idst1 = array_values($idst);
         // dd($idst1);
         
-        $Product_Out = Product_Out::find($idst);
+        // $Product_Out = Product_Out::find($idst);
         $Product_Out = \DB::table('product_out')
         ->join('products', 'products.id', '=', 'product_out.product_id')
         ->join('barcodes', 'barcodes.id', '=', 'products.barcode_id')
         ->join('customers', 'customers.id', '=', 'product_out.customer_id')
-        ->select('products.name as product_name', 'customers.name as customer_name', 'barcodes.name as barcode_name', 'product_out.price', 'product_out.qty', 'product_out.po_no', 'product_out.date', 'customers.address', 'customers.email')
-        ->where('product_out.id', $idst1)
+        ->select('products.name as product_name', 'customers.name as customer_name', 'barcodes.name as barcode_name', 'product_out.subtotal', 'product_out.qty', 'product_out.po_no', 'product_out.date', 'customers.address', 'customers.email')
+        ->whereIn('product_out.id', $idst1)
         ->get();
         // dd($Product_Out);
 
         $companyInfo = Company::find(1);
+$view = view('product_out.productOutPDF', compact('Product_Out', 'companyInfo'))->render();
 //  dd($Product_Out);
-        $pdf = PDF::setOptions([
-            'images' => true,
-            'isHtml5ParserEnabled' => true, 
-            'isRemoteEnabled' => true
-        ])->loadView('product_out.productOutPDF', compact('Product_Out', 'companyInfo'));//->setPaper('a4', 'portrait')->stream();
-        // return $pdf->download('Product_Out.pdf');
-        return $pdf->download(date("Y-m-d H:i:s",time()).'_Product_Out.pdf');
+// 
+// return view('sales.productOutPDF', compact('Product_Out', 'companyInfo'))->render();    
+return response()->json([
+    'success'    => true,
+    'message'    => 'Order Completed',
+    'data'      => $view
+]);
+
 
     }
 
