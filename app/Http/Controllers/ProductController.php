@@ -7,7 +7,7 @@ use App\Barcode;
 use App\Product;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
-
+use Auth;
 class ProductController extends Controller
 {
     public function __construct()
@@ -24,7 +24,7 @@ class ProductController extends Controller
         $category = Category::orderBy('name','ASC')
             ->get()
             ->pluck('name','id');
-
+// dd($category);
         $producs = Product::all();
         return view('products.index', compact('category'));
     }
@@ -214,8 +214,16 @@ class ProductController extends Controller
                 return '<img class="rounded-square" width="100" src="'. url($product->image) .'" alt="">';
             })
             ->addColumn('action', function($product){
+                if (Auth::user()->role == "admin" )
+                    {
                 return '<a onclick="editForm('. $product->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a> ' .
                     '<a onclick="deleteData('. $product->id .')" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-trash"></i> Delete</a>';
+                    }
+                    else
+                    {
+                        return '<a onclick="editForm('. $product->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a> ' ;
+    
+                    }
             })
             ->rawColumns(['barcode','barcode_image','category_name','show_photo','action'])->make(true);
     }

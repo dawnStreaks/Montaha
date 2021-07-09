@@ -242,9 +242,17 @@ class OrderController extends Controller
                 return '<input type="checkbox" name="exportpdf[]" class="checkbox" value="'. $order->id .'">';
             })
             ->addColumn('action', function($order){
+                if (Auth::user()->role == "admin" )
+                {
+
                 return '<a onclick="editForm('. $order->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a> ' .
                     '<a onclick="deleteData('. $order->id .')" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-trash"></i> Delete</a> '.
                     '<a onclick="refund('. $order->id .')" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-repeat"></i> Refund</a>';
+                }
+                else{
+                    return '<a onclick="editForm('. $order->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a> ' .
+                    '<a onclick="refund('. $order->id .')" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-repeat"></i> Refund</a>';
+                }
 
 
             })

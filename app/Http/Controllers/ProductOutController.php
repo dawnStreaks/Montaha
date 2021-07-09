@@ -229,6 +229,9 @@ class ProductOutController extends Controller
                 return '<input type="checkbox" name="exportpdf[]" class="checkbox" value="'. $product->id .'">';
             })
             ->addColumn('action', function($product){
+                if (Auth::user()->role == "admin" )
+                {
+
                 if($product->refund_status == 0)
                 {
                 return '<a onclick="editForm('. $product->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a> ' .
@@ -240,7 +243,20 @@ class ProductOutController extends Controller
                     return '<a onclick="editForm('. $product->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a> ' .
                     '<a onclick="deleteData('. $product->id .')" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-trash"></i> Delete</a> ';
                  }
+                }
+                else{
 
+                    if($product->refund_status == 0)
+                    {
+                    return '<a onclick="editForm('. $product->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a> ' .
+                        '<a onclick="refund('. $product->id .')" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-repeat"></i> Refund</a> ';
+                    }
+                    else
+                     {
+                        return '<a onclick="editForm('. $product->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a> ' ;
+                     }
+
+                }
 
             })
             ->rawColumns(['multiple_export','products_name','price', 'po_no', 'refund_status', 'discount','customer_name','cashier', 'action'])->make(true);

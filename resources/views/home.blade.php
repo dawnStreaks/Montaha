@@ -19,6 +19,72 @@
 
 @section('content')
 <!-- Small boxes (Stat box) -->
+
+<div class="row">
+    <div class="col-lg-4 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-navy">
+           
+            <div class="inner">
+            
+                <h3>{{ \App\Sale_New::sum('total_amount') }} KWD</h3>
+                <p>Total Amount from {{ \App\Sale_New::count() }} sales by POS</p>
+
+            </div>
+            
+
+            <div class="icon">
+                <i class="ion ion-person-stalker"></i>
+            </div>
+            <a href="{{ route('sales.index') }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <!-- ./col -->
+    {{-- <div class="col-lg-3 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-teal">
+            <div class="inner">
+                <h3>{{ \App\Supplier::count() }}<sup style="font-size: 20px"></sup></h3>
+
+                <p>Supplier</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-person"></i>
+            </div>
+            <a href="{{ route('suppliers.index') }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <!-- ./col --> --}}
+    <div class="col-lg-4 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-maroon">
+            <div class="inner">
+                <h3>{{ \DB::table('orders')->sum('subtotal')  }} KWD</h3>
+                <p>Total Amount from {{  \DB::table('orders')->count() }} orders</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-log-in"></i>
+            </div>
+            <a href="{{ route('productsIn.index') }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <!-- ./col -->
+    <div class="col-lg-4 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-gray">
+            <div class="inner">
+                <h3>{{ \DB::table('product_out')->where('customer_id', '!=', 3)->sum('subtotal')  }} KWD</h3>
+                <p>Total Amount from {{  \DB::table('product_out')->where('customer_id', '!=', 3)->count() }} sales to Qatar outlets</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-log-out"></i>
+            </div>
+            <a href="{{ route('orders.index') }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <!-- ./col -->
+</div>
+
 <div class="row">
     <div class="col-lg-4 col-xs-6">
         <!-- small box -->
@@ -78,73 +144,6 @@
             <a href="{{ route('customers.index') }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
     </div> --}}
-    <!-- ./col -->
-</div>
-
-
-
-<div class="row">
-    <div class="col-lg-4 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-navy">
-           
-            <div class="inner">
-            
-                <h3>{{ \App\Sale_New::sum('total_amount') }} KWD</h3>
-                <p>Total Amount from {{ \App\Sale_New::count() }} sales by POS</p>
-
-            </div>
-            
-
-            <div class="icon">
-                <i class="ion ion-person-stalker"></i>
-            </div>
-            <a href="{{ route('sales.index') }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <!-- ./col -->
-    {{-- <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-teal">
-            <div class="inner">
-                <h3>{{ \App\Supplier::count() }}<sup style="font-size: 20px"></sup></h3>
-
-                <p>Supplier</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-person"></i>
-            </div>
-            <a href="{{ route('suppliers.index') }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <!-- ./col --> --}}
-    <div class="col-lg-4 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-maroon">
-            <div class="inner">
-                <h3>{{ \DB::table('orders')->sum('subtotal')  }} KWD</h3>
-                <p>Total Amount from {{  \DB::table('orders')->count() }} sales to Doha outlets</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-log-in"></i>
-            </div>
-            <a href="{{ route('productsIn.index') }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
-    <!-- ./col -->
-    <div class="col-lg-4 col-xs-6">
-        <!-- small box -->
-        <div class="small-box bg-gray">
-            <div class="inner">
-                <h3>{{ \DB::table('product_out')->where('customer_id', '!=', 3)->sum('subtotal')  }} KWD</h3>
-                <p>Total Amount from {{  \DB::table('product_out')->where('customer_id', '!=', 3)->count() }} sales by Order</p>
-            </div>
-            <div class="icon">
-                <i class="ion ion-log-out"></i>
-            </div>
-            <a href="{{ route('orders.index') }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-        </div>
-    </div>
     <!-- ./col -->
 </div>
 

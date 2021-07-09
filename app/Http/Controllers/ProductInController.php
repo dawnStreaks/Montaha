@@ -160,9 +160,17 @@ class ProductInController extends Controller
                 return '<input type="checkbox" name="exportpdf[]" class="checkbox" value="'. $product->id .'">';
             })
             ->addColumn('action', function($product){
+                if (Auth::user()->role == "admin" )
+                {
+
                 return '<a onclick="editForm('. $product->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a> ' .
                     '<a onclick="deleteData('. $product->id .')" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-trash"></i> Delete</a> ';
+                }
+                else{
+                    return '<a onclick="editForm('. $product->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a> ' ;
 
+                    
+                }
 
             })
             ->rawColumns(['multiple_export','products_name','user_name','action'])->make(true);

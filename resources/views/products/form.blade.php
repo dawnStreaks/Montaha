@@ -50,8 +50,9 @@
                         <div class="form-group">
                             <label>Category</label>
                             <div>
-                                {!! Form::select('category_id', $category, 0 , ['class' => 'form-control select2', 'placeholder' => 'please select', 'id' => 'category_id', 'required']) !!}
+                                {!! Form::select('category_id', $category, 10 , ['class' => 'form-control select2', 'placeholder' => 'please select', 'id' => 'category_id', 'required']) !!}
                                 <span class="help-block with-errors"></span>
+                                
                             </div>
                         </div>
                     </div>

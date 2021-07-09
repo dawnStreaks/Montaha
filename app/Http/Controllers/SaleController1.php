@@ -157,10 +157,21 @@ class SaleController1 extends Controller
         })
 
             ->addColumn('action', function($sales){
+                if (Auth::user()->role == "admin" )
+                {
+
                 return '<a onclick="editForm('. $sales->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a> ' .
                     '<a onclick="deleteData('. $sales->id .')" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-trash"></i> Delete</a> ' .
                     '<a onclick="generateInvoice('. $sales->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-file"></i> Generate Invoice</a> '.
                     '<a onclick="refund('. $sales->id .')" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-repeat"></i> Refund</a>';
+                }
+                else{
+                    return '<a onclick="editForm('. $sales->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a> ' .
+                    '<a onclick="generateInvoice('. $sales->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-file"></i> Generate Invoice</a> '.
+                    '<a onclick="refund('. $sales->id .')" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-repeat"></i> Refund</a>';
+
+
+                }
 
             })
             ->rawColumns(['customer_name', 'cashier', 'refund_status','action'])->make(true);
