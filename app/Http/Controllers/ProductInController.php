@@ -62,8 +62,19 @@ class ProductInController extends Controller
             'qty'            => 'required',
             'date'        => 'required'
         ]);
+        $barcode = \DB::select(\DB::raw("select id from barcodes where name = '$request->product_id'"));//product_id is the barcode name
+        
+       $barcode_id = $barcode[0]->id;
+        $find_product = \DB::select(\DB::raw("select id, name from products where barcode_id = $barcode_id"));
+        //$Product_Out->update($request->all());
+        // $request->product_id = $find_product[0]->name;
+        $product_id = $find_product[0]->id;
+        // dd($product_id);
+        // $price = $find_product[0]->price;
+        // $price = $request->price;
+      
 
-        Product_In::create(array_merge($request->all(),['user_name' => Auth::user()->name]));
+        Product_In::create(array_merge($request->all(),['user_name' => Auth::user()->name, 'product_id' => $product_id]));
 
         $product = Product::findOrFail($request->product_id);
         $product->qty += $request->qty;

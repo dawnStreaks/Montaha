@@ -164,12 +164,11 @@ class SaleController extends Controller
         ]);
 
         $Temp_Sale = Temp_Sale::findOrFail($id);
-        if($request->discount != $Temp_Sale->discount)
-        {
+       
           $subtotal = $request->price * $request->qty ;
           if($request->discount > 0)
             $subtotal = $subtotal - ($subtotal* ($request->discount/100));
-       }
+      
         $Temp_Sale->update(array_merge($request->all(), ['subtotal' => $subtotal]));
 
         $product = Product::findOrFail($request->product_id);

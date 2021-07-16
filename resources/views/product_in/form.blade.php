@@ -17,10 +17,17 @@
 
                     <div class="box-body">
                         <div class="form-group">
+                            <label>Products</label>
+                            <input type="text" class="form-control" id="product_id" name="product_id"   required>
+                            {{-- <span class="text-danger"><span id="productName"></span> currently number <span id="available">0</span>.</span> --}}
+                            <span class="help-block with-errors"></span>
+                        </div>
+
+                        {{-- <div class="form-group">
                             <label>Products</label><br>
                             {!! Form::select('product_id', $products, null, ['class' => 'form-control select2', 'placeholder' => '-- Choose Product --', 'id' => 'product_id', 'required']) !!}
                             <span class="help-block with-errors"></span>
-                        </div>
+                        </div> --}}
 
                         {{-- <div class="form-group">
                             <label>User</label><br>

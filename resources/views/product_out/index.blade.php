@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ asset('assets/bower_components/bootstrap-daterangepicker/daterangepicker.css') }}">
     <!-- bootstrap datepicker -->
     <link rel="stylesheet" href="{{ asset('assets/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}">
+    
 @endsection
 
 @section('header') Products Out @endsection
@@ -30,6 +31,25 @@
 
         <div class="box-header">
             <h3 class="box-title">Data Products Out</h3>
+            {{-- <table cellspacing="5" cellpadding="5" border="0">
+                <tbody><tr>
+                    <td>Minimum date:</td>
+                    <td> <div class="form-group">
+                        <label>Date</label>
+                        <input data-date-format='yyyy-mm-dd' type="text" class="form-control" id="min" name="min"   required>
+                        <span class="help-block with-errors"></span>
+                    </div>
+</td>
+                
+                    <td>Maximum date:</td>
+                    <td><div class="form-group">
+                        <label>Date</label>
+                        <input data-date-format='yyyy-mm-dd' type="text" class="form-control" id="max" name="max"   required>
+                        <span class="help-block with-errors"></span>
+                    </div>
+</td>
+                </tr>
+            </tbody></table> --}}
         </div>
 
         <div class="box-header">
@@ -98,12 +118,24 @@
             //Date picker
             $('#date').datepicker({
                 autoclose: true,
-                 format: 'dd-mm-yy',
+                //  format: 'dd-mm-yy',
                  
             })
             $('#date').datepicker('setDate', new Date());
+            // $('#date').val(new Date().toDateInputValue());
 
-
+            $('#min').datepicker({
+                autoclose: true,
+                //  format: 'dd-mm-yy',
+                 
+            })
+            // $('#min').datepicker('setDate', new Date());
+            $('#max').datepicker({
+                autoclose: true,
+                //  format: 'dd-mm-yy',
+                 
+            })
+            // $('#max').datepicker('setDate', new Date());
             //Colorpicker
             $('.my-colorpicker1').colorpicker()
             //color picker with addon
@@ -135,7 +167,30 @@
                 {data: 'refund_status', name: 'refund_status'},
                 {data: 'cashier', name: 'cashier'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
-            ]
+            ],
+            initComplete: function () {
+                var minDate, maxDate;
+ 
+// Custom filtering function which will search data in column four between two values
+// $.fn.dataTable.ext.search.push(
+//     function( settings, data, dataIndex ) {
+//         var min = $('#min').val();
+//         var max =$('#max').val();
+//         alert(min);
+//         var date = new Date( data[8] );
+ 
+//         if (
+//             ( min === null && max === null ) ||
+//             ( min === null && date <= max ) ||
+//             ( min <= date   && max === null ) ||
+//             ( min <= date   && date <= max )
+//         ) {
+//             return true;
+//         }
+//         return false;
+//     }
+// );
+            }
         });
 
         function addForm() {
@@ -143,11 +198,13 @@
             $('input[name=_method]').val('POST');
             $('#modal-form').modal('show');
             $('#modal-form form')[0].reset();
+            $('#customer_id').val("").trigger('change');
             $('.modal-title').text('Add Products');
         }
 
         $(document).on("change","#product_id",function(){
             checkAvailable(this.value);
+            // alert(this.value);
         });
 
         function editForm(id) {
@@ -166,7 +223,8 @@
                     $('#product_id').val(data.product_id).trigger('change');
                     $('#customer_id').val(data.customer_id).trigger('change');
                     $('#qty').val(data.qty);
-                    // $('#date').val(data.date);
+                    $('#price').val(data.price);
+                    $('#date').val(data.date);
                     $('#discount').val(data.discount);
 
                 },
@@ -180,12 +238,16 @@
         function checkAvailable(id) {
             $.ajax({
                 url: "{{ url('checkAvailable') }}" + '/' + id,
+                // url: "{{ url('checkAvailable') }}",
                 type: "GET",
                 dataType: "JSON",
                 success: function(data) {
                     $('#available').text(data.qty);
                     $('#productName').text(data.name);
-                   if(data.qty < 1)
+                    $('#price').val(data.price).trigger('change');
+                    // alert(data.qty);
+
+                   if(data.qty < 0 && save_method == 'add')
                    {
                     $('#product_id').val("").trigger('change');
 
@@ -286,7 +348,9 @@
                         contentType: false,
                         processData: false,
                         success : function(data) {
+                            $('#modal-form form')[0].reset();
                             $('#modal-form').modal('hide');
+
                             table.ajax.reload();
                             swal({
                                 title: 'Success!',
@@ -361,7 +425,7 @@
             });
         });
     });
-
+  
 
         // $(function(){
         //     // Check if any checkbox checked

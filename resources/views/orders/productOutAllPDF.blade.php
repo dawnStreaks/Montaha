@@ -57,7 +57,7 @@
             <td>{{ $p->product->name }}</td>
             <td>{{ $p->price }}</td>
             <td>{{ $p->qty }}</td>
-            <td>{{ number_format($p->price * $p->qty) }}</td>
+            <td>{{ number_format($p->price * $p->qty, 2, '.', '') }}</td>
             <td>{{ $p->date }}</td>
         </tr>
         </tbody>

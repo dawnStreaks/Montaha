@@ -90,10 +90,12 @@
             //Date picker
             $('#date').datepicker({
                 autoclose: true,
-                 format: 'dd-mm-yy',
+                //  format: 'dd-mm-yy',
                  
             })
             $('#date').datepicker('setDate', new Date());
+            $("#date").datepicker();
+            $("#date").datepicker("setDate", new Date());
 
             //Colorpicker
             $('.my-colorpicker1').colorpicker()
@@ -141,7 +143,6 @@
                 success: function(data) {
                     $('#modal-form').modal('show');
                     $('.modal-title').text('Edit Products In');
-
                     $('#id').val(data.id);
                     $('#product_id').val(data.product_id).trigger('change');
                     $('#user_id').val(data.user_id).trigger('change');

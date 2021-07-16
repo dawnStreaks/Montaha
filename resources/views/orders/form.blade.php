@@ -16,14 +16,21 @@
 
 
                     <div class="box-body">
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label>Products</label>
                             {!! Form::select('product_id', $products, null, ['class' => 'form-control select2', 'placeholder' => '-- Choose Product --', 'id' => 'product_id', 'required']) !!}
                             <span class="help-block with-errors"></span>
+                        </div> --}}
+                        <div class="form-group">
+                            <label>Products</label>
+                            <input type="text" class="form-control" id="product_id" name="product_id"   required>
+                            {{-- <span class="text-danger"><span id="productName"></span> currently number <span id="available">0</span>.</span> --}}
+                            <span class="help-block with-errors"></span>
                         </div>
 
+
                         <div class="form-group">
-                            <label>Customer Name</label>
+                            <label>Customer Name & Phone No</label>
                             <input type="text" class="form-control" id="customer_name" name="customer_name" required>
                             <span class="help-block with-errors"></span>
                         </div>

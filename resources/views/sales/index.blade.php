@@ -15,7 +15,7 @@
 @section('header')
 {{-- <img src="{{ asset('upload/logo/logo.jpeg') }}" alt="logo" style="width:100%; width:50px;/> --}}
   <h1>Montaha Couture</h1> @endsection
-@section('description') Sales & Invoice @endsection
+@section('description') Point of Sale @endsection
 
 @section('top')
 @endsection
@@ -46,7 +46,7 @@
         </div>
 
         <div class="box-header">
-            <a onclick="addForm()" class="btn btn-primary" >Add Products Out</a>
+            {{-- <a onclick="addForm()" class="btn btn-primary" >Add Products Out</a> --}}
             <a href="{{ route('exportPDF.productOutAll1') }}" class="btn btn-danger">Export Data PDF</a>
             <a href="{{ route('exportExcel.productOutAll1') }}" class="btn btn-success">Export Data Excel</a>
              <button id="order_completed" class="btn btn-primary"> Order Completed</button>
@@ -109,7 +109,7 @@
             //Date picker
             $('#date').datepicker({
                 autoclose: true,
-                 format: 'dd-mm-yy',
+                //  format: 'dd-mm-yy',
                  
             })
             $('#date').datepicker('setDate', new Date());

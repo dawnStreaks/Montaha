@@ -55,6 +55,7 @@
                     <th>PO_No</th>
                     <th>Customer Name</th>
                     <th>Order Status</th>
+                    <th>Refund Status</th>
                     <th> Cashier </th>
                     <th></th>
 
@@ -98,7 +99,7 @@
             //Date picker
             $('#date').datepicker({
                 autoclose: true,
-                 format: 'dd-mm-yy',
+                //  format: 'dd-mm-yy',
                  
             })
             $('#date').datepicker('setDate', new Date());
@@ -132,6 +133,7 @@
                 {data: 'po_no', name: 'po_no'},
                 {data: 'customer_name', name: 'customer_name'},
                 {data: 'order_status', name: 'order_status'},
+                {data: 'refund_status', name: 'refund_status'},
                 {data: 'cashier', name: 'cashier'},
                 {data: 'action', name: 'action', orderable: false, searchable: false}
             ]
@@ -162,13 +164,13 @@
                     $('#modal-form').modal('show');
                     $('.modal-title').text('Edit Orders');
                     $('#id').val(data.id);
-                    $('#product_id').val(data.product_id).trigger('change');
-                    $('#customer_name').val(data.customer_name).trigger('change');
+                    $('#product_id').val(data.product_id);
+                    $('#customer_name').val(data.customer_name);
                     $('#qty').val(data.qty);
                     $('#order_status').val(data.order_status);
                     $('#discount').val(data.discount);
                     $('#price').val(data.price);
-
+                    $('#date').val(data.date);
                 },
                 error : function() {
                     alert("Nothing Data");
@@ -185,6 +187,8 @@
                 success: function(data) {
                     $('#available').text(data.qty);
                     $('#productName').text(data.name);
+                    $('#price').val(data.price);
+
                 }
             });
         }
@@ -200,7 +204,7 @@
                 confirmButtonText: 'Yes, Refund !'
             }).then(function () {
                 $.ajax({
-                    url : "{{ url('refund') }}" + '/' + id,
+                    url : "{{ url('refundOrder') }}" + '/' + id,
                     type : "GET",
                     success : function(data) {
                         table.ajax.reload();

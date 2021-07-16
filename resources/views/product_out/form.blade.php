@@ -16,11 +16,18 @@
 
 
                     <div class="box-body">
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label>Products</label>
                             {!! Form::select('product_id', $products, null, ['class' => 'form-control select2', 'placeholder' => '-- Choose Product --', 'id' => 'product_id', 'required']) !!}
                             <span class="help-block with-errors"></span>
+                        </div> --}}
+                        <div class="form-group">
+                            <label>Products</label>
+                            <input type="text" class="form-control" id="product_id" name="product_id"   required>
+                            {{-- <span class="text-danger"><span id="productName"></span> currently number <span id="available">0</span>.</span> --}}
+                            <span class="help-block with-errors"></span>
                         </div>
+
 
                         <div class="form-group">
                             <label>Customer</label>
@@ -35,6 +42,11 @@
                             <span class="help-block with-errors"></span>
                         </div>
 
+                        <div class="form-group">
+                            <label>Price</label>
+                            <input type="text" class="form-control" id="price" name="price"  required>
+                        </div>
+                       
                         <div class="form-group">
                             <label>Discount %</label>
                         <input type="number" value="0" min="0" max="100" id="discount" name="discount" step="1"/>

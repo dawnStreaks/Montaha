@@ -164,6 +164,8 @@
             $total = count($Product_Out); 
             $i=1;
             $allTotal = 0;
+            $allQty = 0;
+
             @endphp
 
             @foreach($Product_Out as $productData)
@@ -183,10 +185,12 @@
                 <td colspan="2">{{ $productData->product_name }} &nbsp;&nbsp; </td>
                 <td colspan="2">{{ $productData->subtotal }} x {{ $productData->qty }} &nbsp;&nbsp;</td>
                 <!-- <td></td> -->
-                <td colspan="2">{{ number_format($productData->subtotal * $productData->qty) }}</td>
+                <td colspan="2">{{ number_format($productData->subtotal * $productData->qty, 2, '.', '') }}</td>
             </tr>
             @php 
             $allTotal += $productData->subtotal * $productData->qty; 
+            $allQty += $productData->qty; 
+
             @endphp
             @endforeach
             <br>
@@ -197,10 +201,10 @@
                 <!-- <td></td>
                 <td></td> -->
                 <td colspan="2">
-                    Total Items: {{number_format($total)}}
+                    Total Items: {{number_format($allQty)}}
                 </td>
                 <td colspan="2">
-                   Total : {{number_format($allTotal)}} KWD
+                   Total : {{number_format($allTotal, 2, '.', '')}} KWD
                 </td>
             </tr>
         </table>

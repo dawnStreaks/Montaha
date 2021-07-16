@@ -72,10 +72,18 @@ class OrderController extends Controller
            'date'           => 'required'
         ]);
         // $price = \DB::table('products')->select('price')->where('id', $request['product_id'] )->get();
+        $barcode = \DB::select(\DB::raw("select id from barcodes where name = '$request->product_id'"));//product_id is the barcode name
+        
+        $barcode_id = $barcode[0]->id;
+         $find_product = \DB::select(\DB::raw("select id, name from products where barcode_id = $barcode_id"));
+         //$Product_Out->update($request->all());
+         // $request->product_id = $find_product[0]->name;
+         $product_id = $find_product[0]->id;
+ 
         $subtotal = $request->price * $request->qty ;
         if($request->discount > 0)
         $subtotal = $subtotal - ($subtotal* ($request->discount/100));
-        Order::create(array_merge($request->all(), ['po_no' => rand(1, 99999), 'price' => $request->price, 'refund_status' => 0, 'subtotal' => $subtotal, 'cashier' => Auth::user()->name]));
+        Order::create(array_merge($request->all(), ['product_id' => $product_id, 'po_no' => rand(1, 99999), 'price' => $request->price, 'refund_status' => 0, 'subtotal' => $subtotal, 'cashier' => Auth::user()->name]));
         $product = Product::findOrFail($request->product_id);
         $product->qty -= $request->qty;
         $product->save();
@@ -154,8 +162,8 @@ class OrderController extends Controller
         
 
         $Product_Out = Order::findOrFail($id);
-        // Refund::create(['po_no' => $Product_Out->po_no, 'price' => $Product_Out->price, 'qty' => $Product_Out->qty, 'discount' => $Product_Out->discount, 'refund_amount' => $Product_Out->price, 'subtotal' => $subtotal, 'cashier' => Auth::user()->name]));
-
+         $refund_status = "Refund of ". $Product_Out->subtotal . "KWD  "   ." Qty x Price " . $Product_Out->qty. " x ". $Product_Out->price . " on ". date("Y/m/d"). "by ". $Product_Out->cashier;
+        // Refund::create(['product_out_id' => $id, 'po_no' => $Product_Out->po_no, 'refund_date' =>  date("Y/m/d"), 'refund_amount' => $Product_Out->price,  'cashier' => Auth::user()->name]);
         $Product_Out->price = 0;
         $Product_Out->qty = 0;
         $subtotal = $Product_Out->price * $Product_Out->qty ; //in case refund amount is included, 
@@ -163,7 +171,7 @@ class OrderController extends Controller
           if($Product_Out->discount > 0)
             $subtotal = $subtotal - ($subtotal* ($Product_Out->discount/100));
         
-        $Product_Out->update(['subtotal' => $subtotal,  'refund_status' => 1]);
+        $Product_Out->update(['subtotal' => $subtotal, 'cashier' => Auth::user()->name, 'refund_status' => $refund_status]);
 
         $product = Product::findOrFail($Product_Out->product_id);
         $product->qty += $Product_Out->qty;
@@ -175,7 +183,6 @@ class OrderController extends Controller
             'message'    => 'Refund Succesfull'
         ]);
     }
-
 
 
     /**
@@ -232,10 +239,11 @@ class OrderController extends Controller
                 return Auth::user()->name;
             })
             ->addColumn('refund_status', function ($order){
-                if($order->refund_status == 0)
-                    return "No";
-                else
-                    return "Refund of ". $order->subtotal . "KWD  "  . $order->product->name ." - " . $order->qty. " by ". $order->customer->name . " on ". date("Y/m/d");
+                if($order->refund_status == "0")
+                return "No";
+             else
+             return $order->refund_status;
+               
             })
 
             ->addColumn('multiple_export', function ($order){
@@ -245,13 +253,30 @@ class OrderController extends Controller
                 if (Auth::user()->role == "admin" )
                 {
 
+                if($order->refund_status == 0)
+                {
                 return '<a onclick="editForm('. $order->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a> ' .
                     '<a onclick="deleteData('. $order->id .')" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-trash"></i> Delete</a> '.
-                    '<a onclick="refund('. $order->id .')" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-repeat"></i> Refund</a>';
+                    '<a onclick="refund('. $order->id .')" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-repeat"></i> Refund</a> ';
+                }
+                else
+                 {
+                    return '<a onclick="editForm('. $order->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a> ' .
+                    '<a onclick="deleteData('. $order->id .')" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-trash"></i> Delete</a> ';
+                 }
                 }
                 else{
+
+                    if($order->refund_status == 0)
+                    {
                     return '<a onclick="editForm('. $order->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a> ' .
-                    '<a onclick="refund('. $order->id .')" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-repeat"></i> Refund</a>';
+                        '<a onclick="refund('. $order->id .')" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-repeat"></i> Refund</a> ';
+                    }
+                    else
+                     {
+                        return '<a onclick="editForm('. $order->id .')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a> ' ;
+                     }
+
                 }
 
 
@@ -311,7 +336,15 @@ class OrderController extends Controller
 
     public function checkAvailable($id)
     {
-        $Product = Product::findOrFail($id);
+        
+        $barcode = \DB::select(\DB::raw("select id from barcodes where name = '$id'"));//product_id is the barcode name
+        
+        $barcode_id = $barcode[0]->id;
+        $find_product = \DB::select(\DB::raw("select id, name from products where barcode_id = $barcode_id"));
+         //$Product_Out->update($request->all());
+         // $request->product_id = $find_product[0]->name;
+        $product_id = $find_product[0]->id; 
+        $Product = Product::findOrFail($product_id);
         return $Product;
     }
 }

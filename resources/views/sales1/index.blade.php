@@ -11,8 +11,8 @@
     <!-- bootstrap datepicker -->
     <link rel="stylesheet" href="{{ asset('assets/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}">
 @endsection
-@section('header') Sales @endsection
-@section('description') This page about your all sales @endsection
+@section('header') Invoice @endsection
+@section('description') This page about  all your invoice @endsection
 
 @section('top')
 @endsection
@@ -20,7 +20,7 @@
 @section('breadcrumb')
 <ol class="breadcrumb">
     <li><a href="{{url('/')}}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-    <li class="active"> Sales</li>
+    <li class="active"> Invoice</li>
 </ol>
 @endsection
 
@@ -32,7 +32,7 @@
         </div>
 
         <div class="box-header">
-            <a onclick="addForm()" class="btn btn-primary" >Generate Invoice</a>
+            <a onclick="addForm()" class="btn btn-primary" >Create Invoice</a>
             <a href="{{ route('exportPDF.salesAll1') }}" class="btn btn-danger">Export PDF</a>
             <a href="{{ route('exportExcel.salesAll1') }}" class="btn btn-success">Export Excel</a>
         </div>
@@ -95,7 +95,7 @@
             //Date picker
             $('#date').datepicker({
                 autoclose: true,
-                 format: 'dd-mm-yy',
+                //  format: 'dd-mm-yy',
                  
             })
             $('#date').datepicker('setDate', new Date());

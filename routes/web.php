@@ -93,6 +93,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/exportOrderAll','OrderController@exportProductOutAll')->name('exportPDF.orderAll');
     Route::get('/exportOrderAllExcel','OrderController@exportExcel')->name('exportExcel.orderAll');
     Route::get('/exportOrder','OrderController@exportProductOut')->name('exportPDF.order');
+    Route::get('/refundOrder/{id}','OrderController@refund')->name('refund');
+
     // Route::get('/checkAvailable/{id}','OrderController@checkAvailable')->name('checkAvailable');
 
 });

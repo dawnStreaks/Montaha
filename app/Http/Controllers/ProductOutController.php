@@ -67,11 +67,22 @@ class ProductOutController extends Controller
            'qty'            => 'required',
            'date'           => 'required'
         ]);
-        $price = \DB::table('products')->select('price')->where('id', $request['product_id'] )->get();
-        $subtotal = $price[0]->price * $request->qty ;
+        $barcode = \DB::select(\DB::raw("select id from barcodes where name = '$request->product_id'"));//product_id is the barcode name
+        
+       $barcode_id = $barcode[0]->id;
+        $find_product = \DB::select(\DB::raw("select id, name from products where barcode_id = $barcode_id"));
+        //$Product_Out->update($request->all());
+        // $request->product_id = $find_product[0]->name;
+        $product_id = $find_product[0]->id;
+        // dd($product_id);
+        // $price = $find_product[0]->price;
+        $price = $request->price;
+      
+        // $price = \DB::table('products')->select('price')->where('id', $request['product_id'] )->get();
+        $subtotal = $price * $request->qty ;
         if($request->discount > 0)
         $subtotal = $subtotal - ($subtotal* ($request->discount/100));
-        Product_Out::create(array_merge($request->all(), ['po_no' => rand(1, 99999), 'price' => $price[0]->price, 'refund_status' => 0, 'subtotal' => $subtotal, 'cashier' => Auth::user()->name]));
+        Product_Out::create(array_merge($request->all(), ['product_id' =>$product_id , 'po_no' => rand(1, 99999), 'price' => $price, 'refund_status' => 0, 'subtotal' => $subtotal, 'cashier' => Auth::user()->name]));
         $product = Product::findOrFail($request->product_id);
         $product->qty -= $request->qty;
         $product->save();
@@ -118,13 +129,14 @@ class ProductOutController extends Controller
         $this->validate($request, [
             'product_id'     => 'required',
             'customer_id'    => 'required',
+            'price'    => 'required',
             'qty'            => 'required',
             'date'           => 'required',
             
         ]);
 
         $Product_Out = Product_Out::findOrFail($id);
-        $subtotal = $Product_Out->price * $request->qty ;
+        $subtotal =  $request->price * $request->qty ;
 
           if($request->discount > 0)
             $subtotal = $subtotal - ($subtotal* ($request->discount/100));
@@ -148,6 +160,10 @@ class ProductOutController extends Controller
         $Product_Out = Product_Out::findOrFail($id);
          $refund_status = "Refund of ". $Product_Out->subtotal . "KWD  "   ." Qty x Price " . $Product_Out->qty. " x ". $Product_Out->price . " on ". date("Y/m/d"). "by ". $Product_Out->cashier;
         // Refund::create(['product_out_id' => $id, 'po_no' => $Product_Out->po_no, 'refund_date' =>  date("Y/m/d"), 'refund_amount' => $Product_Out->price,  'cashier' => Auth::user()->name]);
+        $product = Product::findOrFail($Product_Out->product_id);
+        $product->qty += $Product_Out->qty;
+        $product->update();
+
         $Product_Out->price = 0;
         $Product_Out->qty = 0;
         $subtotal = $Product_Out->price * $Product_Out->qty ; //in case refund amount is included, 
@@ -157,9 +173,6 @@ class ProductOutController extends Controller
         
         $Product_Out->update(['subtotal' => $subtotal, 'cashier' => Auth::user()->name, 'refund_status' => $refund_status]);
 
-        $product = Product::findOrFail($Product_Out->product_id);
-        $product->qty += $Product_Out->qty;
-        $product->update();
 
 
         return response()->json([
@@ -307,7 +320,16 @@ return response()->json([
 
     public function checkAvailable($id)
     {
-        $Product = Product::findOrFail($id);
+
+        $barcode = \DB::select(\DB::raw("select id from barcodes where name = '$id'"));//product_id is the barcode name
+        
+        $barcode_id = $barcode[0]->id;
+        $find_product = \DB::select(\DB::raw("select id, name from products where barcode_id = $barcode_id"));
+         //$Product_Out->update($request->all());
+         // $request->product_id = $find_product[0]->name;
+         $product_id = $find_product[0]->id;
+ 
+        $Product = Product::findOrFail($product_id);
         return $Product;
     }
 }

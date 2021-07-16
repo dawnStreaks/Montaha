@@ -183,7 +183,7 @@
                 <td colspan="2">{{ $productData->product_name }} &nbsp;&nbsp; </td>
                 <td colspan="2">{{ $productData->subtotal }} x {{ $productData->qty }} &nbsp;&nbsp;</td>
                 <!-- <td></td> -->
-                <td colspan="2">{{ number_format($productData->subtotal * $productData->qty) }}</td>
+                <td colspan="2">{{ number_format($productData->subtotal * $productData->qty, 2, '.', '') }}</td>
             </tr>
             @php 
             $allTotal += $productData->subtotal * $productData->qty; 
@@ -200,7 +200,7 @@
                     Total Items: {{number_format($total)}}
                 </td>
                 <td colspan="2">
-                   Total : {{number_format($allTotal)}} KWD
+                   Total : {{number_format($allTotal, 2, '.', '')}} KWD
                 </td>
             </tr>
         </table>
@@ -391,7 +391,7 @@
                 <td colspan="2">{{ $productData->product_name }} &nbsp;&nbsp; </td>
                 <td colspan="2">{{ $productData->subtotal }} x {{ $productData->qty }} &nbsp;&nbsp;</td>
                 <!-- <td></td> -->
-                <td colspan="2">{{ number_format($productData->subtotal * $productData->qty) }}</td>
+                <td colspan="2">{{ number_format($productData->subtotal * $productData->qty, 2, '.', '') }}</td>
             </tr>
             @php 
             $allTotal += $productData->subtotal * $productData->qty; 
@@ -408,7 +408,7 @@
                     Total Items: {{number_format($total)}}
                 </td>
                 <td colspan="2">
-                   Total : {{number_format($allTotal)}} KWD
+                   Total : {{number_format($allTotal, 2, '.', '')}} KWD
                 </td>
             </tr>
         </table>
