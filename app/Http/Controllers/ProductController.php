@@ -152,8 +152,16 @@ class ProductController extends Controller
         }
 
         // $barcode = Barcode::findOrFail($produk->barcode_id);
-        // $barcode->name = $input['barcode'];
+        //
         // $barcode->save();
+
+        // Product::create($input);
+        $bc = \DB::table('products')->select('barcode_id')->where('id', $id )->get();
+        // dd($bc[0]->id);
+        $barcode = Barcode::findOrFail($bc[0]->barcode_id);
+        $barcode->name =  $id. '-' . $input['name'];
+        $barcode->save();
+       
 
         $produk->update($input);
 
