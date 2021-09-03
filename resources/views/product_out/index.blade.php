@@ -53,11 +53,35 @@
         </div>
 
         <div class="box-header">
-            <a onclick="addForm()" class="btn btn-primary" >Add Products Out</a>
-            <a href="{{ route('exportPDF.productOutAll') }}" class="btn btn-danger">Export Data PDF</a>
-            <a href="{{ route('exportExcel.productOutAll') }}" class="btn btn-success">Export Data Excel</a>
-            <button id="downloadPDF" class="btn btn-primary">Export Invoice PDF</button>
+            <a onclick="addForm()" class="btn btn-primary btn-lg" >Add Products Out</a>
+            <a href="{{ route('exportPDF.productOutAll') }}" class="btn btn-danger btn-lg">Export Data PDF</a>
+            <a href="{{ route('exportExcel.productOutAll') }}" class="btn btn-success btn-lg">Export Data Excel</a>
+            <button id="downloadPDF" class="btn btn-primary btn-lg">Export Invoice PDF</button>
         </div>
+
+        <div>
+            <form id="filter-form">
+                
+                <div class="row input-daterange" style="margin-left:10px;">
+                    <div class="col-md-3">
+                        <input type="text" name="from_date" id="from_date" class="form-control" placeholder="From Date" readonly />
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" name="to_date" id="to_date" class="form-control" placeholder="To Date" readonly />
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" value="Submit" name="filter" id="filter" class="btn btn-primary">Filter</button>
+                        <button type="button" name="refresh" id="refresh" class="btn btn-default">Refresh</button>
+                    </div>
+                    <b> Subtotal </b>
+                    <div id="subtotal" class="col-md-3">
+                        
+                    </div>
+                </div>
+            </form>
+          </div>
+        <br />
+
 
         <!-- /.box-header -->
         <div class="box-body">
@@ -149,10 +173,19 @@
     </script>
 
     <script type="text/javascript">
+            var url = '{{ route('api.productsOut') }}';
+
         var table = $('#products-out-table').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('api.productsOut') }}",
+            ajax: {
+            url: "{{ route('api.productsOut') }}",
+            type: "GET", // or 'GET' if you prefer
+            data: function (data) {
+             data.from_date = $('#from_date').val();
+             data.to_date = $('#to_date').val();
+                }
+                },
             columns: [
                 {data: 'multiple_export', name: 'multiple_export'},
                 {data: 'id', name: 'id'},
@@ -192,13 +225,44 @@
 // );
             }
         });
+        $( "#filter-form" ).submit(function( event ) {
+          event.preventDefault();
+          table.ajax.url( url ).load();
+          getSubtotalSum($('#from_date').val(),$('#to_date').val());
+});
+
+$('#refresh').click(function(){
+  $('#from_date').val('');
+  $('#to_date').val('');
+//   $('#orders-table').DataTable().destroy();
+  table.ajax.url( url ).load();
+  
+//   $('#subtotal').text(table.column( 6 ).data().sum());
+
+ });     
+
+function getSubtotalSum(from_date, to_date) {
+            $.ajax({
+                url: "{{ url('getSubtotalSumProductOut') }}" + '/' + from_date + '/' + to_date ,
+                type: "GET",
+                dataType: "JSON",
+                success: function(data) {
+                    $('#subtotal').text(data.data);
+                    console.log(data);
+                    // $('#productName').text(data.name);
+                    // $('#price').val(data.price);
+
+                }
+            });
+        }
+
 
         function addForm() {
             save_method = "add";
             $('input[name=_method]').val('POST');
             $('#modal-form').modal('show');
             $('#modal-form form')[0].reset();
-            $('#customer_id').val("").trigger('change');
+            // $('#customer_id').val("").trigger('change');
             $('.modal-title').text('Add Products');
         }
 
@@ -245,24 +309,32 @@
                     $('#available').text(data.qty);
                     $('#productName').text(data.name);
                     $('#price').val(data.price).trigger('change');
+                    $('#product_id').val(data.barcode_name);
+
                     // alert(data.qty);
 
-                   if(data.qty < 0 && save_method == 'add')
-                   {
-                    $('#product_id').val("").trigger('change');
+                //    if(data.qty < 0 && save_method == 'add')
+                //    {
+                //     $('#product_id').val("").trigger('change');
 
-                    swal({
-                            title: 'Oops...',
-                            text: "Out of stock",
-                            type: 'error',
-                            timer: '1500'
-                        })
-                   }
+                //     swal({
+                //             title: 'Oops...',
+                //             text: "Out of stock",
+                //             type: 'error',
+                //             timer: '1500'
+                //         })
+                //    }
 
 
                 }
             });
         }
+        $('.input-daterange').datepicker({
+         todayBtn:'linked',
+         format:'yyyy-mm-dd',
+         autoclose:true
+         });
+
 
         function refund(id) {
             swal({
